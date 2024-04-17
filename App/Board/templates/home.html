@@ -1,0 +1,46 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <header class="text-center">
+    <h1>Welcome to ScrumBoard App</h1>
+    <p>Streamline Your Agile Workflow</p>
+  </header>
+</div>
+{% endblock %}
+
+{% block extra_content %}
+<section class="my-5 container">
+  <h2>About ScrumBoard</h2>
+  <p>
+    ScrumBoard is a comprehensive tool designed to enhance the agility and productivity of software development
+    teams. With ScrumBoard, you can visualize your project's workflow using a flexible board with five distinct
+    columns: Backlog, Ready, In Progress, Review, and Done. This intuitive layout allows for easy organization and
+    prioritization of tasks, enabling your team to focus on what's crucial at every stage of development.
+  </p>
+  <p>
+    Features at a glance:
+  </p>
+  <ul>
+    <li><strong>Task Management:</strong> Effortlessly create tickets with essential details such as title,
+      description, assignee, tags, and estimated effort. The drag-and-drop functionality ensures seamless transition
+      of tasks across different stages, reflecting the updated status instantly.</li>
+    <li><strong>Collaborative Environment:</strong> Multiple team members can be assigned to a ticket, encouraging
+      collaboration. With the detailed view, you can delve deeper into each ticket, editing titles, descriptions,
+      and tracking the actual hours spent versus the estimated efforts.</li>
+    <li><strong>User Roles and Permissions:</strong> A robust user management system empowers admins to create
+      users, assign roles, and manage permissions with granularity – from editing and moving tickets they are part
+      of, to managing all aspects of any ticket within the system.</li>
+    <li><strong>Secure Authentication:</strong> Users can create accounts with secure credentials, ensuring that
+      their activity is appropriately tracked and managed. The login mechanism is streamlined for ease of access
+      while maintaining security protocols.</li>
+    <li><strong>Admin Oversight:</strong> Admin users hold the key to the kingdom, with the ability to alter user
+      rights, manage all tickets, and adjust the system to align with evolving project requirements.</li>
+  </ul>
+  <p>
+    ScrumBoard is more than just a tracking tool; it is the central hub for your project's planning, execution, and
+    reflection. Welcome aboard and prepare to see your team's efficiency soar!
+  </p>
+  </div>
+</section>
+{% endblock %}
