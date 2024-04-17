@@ -1,5 +1,7 @@
 import user as us
 import ticket
+from enums import rights
+
 
 # Class to manage all users
 class ManageUsers:
@@ -18,7 +20,7 @@ class ManageUsers:
                 return False
         # add user to database and get the id
         user_id = 0
-        new_user = us.User(user_id, username, 0)
+        new_user = us.User(user_id, username, rights.VIEW)
         self.users.append(new_user)
         self.active_user = new_user
         return True

@@ -18,3 +18,7 @@ class Ticket:
     # Edits the ticket if the user has the required rights
     def edit_ticket(self, user, title, description, status, hours):
         return
+
+    # Sets the status to the given status
+    def set_status(self, status):
+        self.status = status
