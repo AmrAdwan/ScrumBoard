@@ -13,13 +13,21 @@ def before_request():
 def home():
     return render_template('home.html')
 
+@app.route('/board')
+def board():
+    columns = ['Backlog', 'Ready', 'In Progress', 'Review', 'Done']
+    colors = ['danger', 'warning', 'info', 'secondary', 'success']
+    combined = zip(columns, colors)
+    return render_template('board.html', combined=list(combined))
+
+
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         result = request.form
         valid_info = manageUsers.login(result["userName"], result["password"])
         if valid_info:
-            return render_template('home.html')
+            return render_template('board.html')
     return render_template('login.html')
 
 
@@ -29,7 +37,7 @@ def register():
         result = request.form
         valid_info = manageUsers.register_user(result["userName"], result["password1"], result["password2"])
         if valid_info:
-            return render_template('home.html')
+            return render_template('login.html')
     return render_template('register.html')
 
 def check_user_authentication():

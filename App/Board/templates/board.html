@@ -1,0 +1,69 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <header class="text-center mb-4">
+    <h1>Scrum Board</h1>
+  </header>
+  <div class="row g-4">
+    <!-- Each column with action buttons -->
+    {% for column, color in combined %}
+    <div class="col-md-2">
+      <div class="bg-light p-2 shadow-sm rounded">
+        <h4 class="bg-{{ color }} text-white p-2 rounded">{{ column }}</h4>
+        <!-- Add Task Button -->
+        <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
+          data-bs-target="#addTaskModal-{{ column|lower }}">
+          Add Task
+        </button>
+        <div class="card my-2">
+          <div class="card-body">
+            <h6 class="card-title">Task Title</h6>
+            <p class="card-text">Description of the task.</p>
+            <p class="card-text"><small class="text-muted">Assigned to Person A</small></p>
+            <!-- Task Action Buttons -->
+            <button type="button" class="btn btn-sm btn-primary">Edit</button>
+            <button type="button" class="btn btn-sm btn-danger">Delete</button>
+          </div>
+        </div>
+        <!-- Additional cards for each status -->
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modals for Adding Tasks -->
+{% for column, color in combined %}
+<div class="modal fade" id="addTaskModal-{{ column|lower }}" tabindex="-1"
+  aria-labelledby="addTaskModalLabel-{{ column|lower }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addTaskModalLabel-{{ column|lower }}">Add Task to {{ column }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="task-title-{{ column|lower }}" class="form-label">Title</label>
+            <input type="text" class="form-control" id="task-title-{{ column|lower }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="task-description-{{ column|lower }}" class="form-label">Description</label>
+            <textarea class="form-control" id="task-description-{{ column|lower }}" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="task-assignee-{{ column|lower }}" class="form-label">Assignee</label>
+            <input type="text" class="form-control" id="task-assignee-{{ column|lower }}">
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Add Task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
