@@ -1,0 +1,49 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4" style="text-align: center;">
+      <!-- Sign Up Form -->
+      <form id="registerForm" method="POST" class="needs-validation" novalidate
+        oninput='password2.setCustomValidity(password2.value != password1.value ? "Passwords do not match." : "")'>
+        <h6 id="registerOutputResult" style="color:gold"></h6>
+        <h1 class="h3 mb-3 font-weight-normal">Create Account</h1>
+        <h6>Please fill the following info</h6>
+
+        <!-- UserName -->
+        <div class="form-group">
+          <input id="registerUsername" name="userName" type="text" class="form-control" placeholder="Username" required>
+          <div class="invalid-feedback">Username is required</div>
+        </div>
+        <br>
+
+        <!-- Password -->
+        <div class="form-group">
+          <input id="registerPassword" name="password1" type="password" class="form-control" placeholder="Password"
+            required>
+          <div class="invalid-feedback">Password is required</div>
+        </div>
+        <br>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <input id="confPassword" name="password2" type="password" class="form-control" placeholder="Confirm Password"
+            required>
+          <div class="invalid-feedback">Please confirm your password</div>
+        </div>
+        <br>
+
+        <!-- Signup Button -->
+        <div class="form-group">
+          <button class="btn btn-md btn-warning" type="submit"><i class="fas fa-plus"></i> Sign Up</button>
+          <button class="btn btn-md btn-dark" type="reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+      </form>
+      <!-- End Sign Up Form -->
+    </div>
+    <div class="col-sm-4"></div>
+  </div>
+</div>
+{% endblock %}
