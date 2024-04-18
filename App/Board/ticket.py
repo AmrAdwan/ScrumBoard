@@ -13,11 +13,20 @@ class Ticket:
 
     # Assigns a user to this ticket
     def assign_user(self, user):
-        return
+        self.users.append(user)
 
-    # Edits the ticket if the user has the required rights
-    def edit_ticket(self, user, title, description, status, hours):
-        return
+    # Edits the ticket
+    def edit_ticket(self, users = None, title = None, description = None, status = None, hours = None):
+        if users is not None:
+            self.users = users
+        if title is not None:
+            self.title = title
+        if description is not None:
+            self.description = description
+        if status is not None:
+            self.status = status
+        if hours is not None:
+            self.hours = hours
 
     # Sets the status to the given status
     def set_status(self, status):

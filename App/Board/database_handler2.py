@@ -34,7 +34,8 @@ class DbHandler:
             return self.mycursor.fetchall()
         except mysql.connector.Error as err:
             self.error_message = "ERROR fetching information for tickets data failed: {}".format(err)
-        
+
+    # Creates a user and returns its id if successful
     def add_user(self, username, password, rightID):
         try:
             sql = "INSERT INTO users(username, password, rightID) VALUES (%s,%s,%s)"
@@ -45,12 +46,14 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = "Error adding user: {}".format(err)
 
+    # Creates a ticket and returns its id if successful
     def add_ticket(self, Title, Description, Hours, statusID):
         try: 
             ticket_sql = "INSERT INTO tickets(title, description, hours, statusID) VALUES (%s,%s,%s,%s)"
             ticket_val = (Title, Description, Hours, statusID)
             self.mycursor.execute(ticket_sql, ticket_val)
             self.mydb.commit()
+            return self.mycursor.lastrowid
         except mysql.connector.Error as err:
             self.error_message = "Error adding ticket: {}".format(err) 
     
@@ -126,13 +129,50 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = f"Error updating user rights: {err}"
 
+    def update_user_username(self, UserID, Username):
+        try:
+            sql = "UPDATE users SET Username = %s WHERE userID = %s"
+            val = (Username, UserID)
+            self.mycursor.execute(sql, val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error updating username: {err}"
+
+    def update_user_password(self, UserID, Password):
+        try:
+            sql = "UPDATE users SET password = %s WHERE userID = %s"
+            val = (Password, UserID)
+            self.mycursor.execute(sql, val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error updating password: {err}"
+
+    def remove_user(self, UserID):
+        try:
+            sql_userticket = "DELETE FROM userticket WHERE UserID = %s"
+            val_userticket = (UserID,)
+            self.mycursor.execute(sql_userticket, val_userticket)
+
+            sql_users = "DELETE FROM users WHERE UserID = %s"
+            val_users = (UserID,)
+            self.mycursor.execute(sql_users, val_users)
+
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error removing user: {err}"
+
+    def update_ticket_hours(self, TicketID, Hours):
+        try:
+            sql = "UPDATE tickets SET Hours = %s WHERE TicketID = %s"
+            val = (Hours, TicketID)
+            self.mycursor.execute(sql, val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error updating hours: {err}"
 
 
 
-
-            
-
-# Maak een instantie van de DbHandler
+        # Maak een instantie van de DbHandler
 db_handler = DbHandler()
 
 

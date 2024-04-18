@@ -52,3 +52,13 @@ class ManageUsers:
                     return user
         return None
 
+    # Deletes the given user or the active user if no user was given
+    def remove_user(self, user = None):
+        del_user = user
+        if del_user is None:
+            del_user = self.active_user
+            self.active_user = None
+        self.users.remove(del_user)
+        # Delete the user in the database
+
+
