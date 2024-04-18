@@ -15,6 +15,10 @@ class Ticket:
     def assign_user(self, user):
         self.users.append(user)
 
+    # Removes the given user from this ticket
+    def remove_user(self, user):
+        self.users.remove(user)
+
     # Edits the ticket
     def edit_ticket(self, users = None, title = None, description = None, status = None, hours = None):
         if users is not None:

@@ -10,8 +10,12 @@ class User:
         self.tickets = []
 
     # Assigns a ticket to this user
-    def assign_ticket(self):
-        return
+    def assign_ticket(self, ticket):
+        self.tickets.append(ticket)
+
+    # Removes the given ticket from this user
+    def remove_ticket(self, ticket):
+        self.tickets.remove(ticket)
 
     # Checks if the user has the given right
     def check_rights(self, rights):

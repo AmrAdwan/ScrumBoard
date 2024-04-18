@@ -33,8 +33,13 @@ class ManageUsers:
             return False
 
         # Check in the database if password is correct
-        self.active_user = cur_user
-        return True
+        if self.dbHandler.check_username_password(username, password):
+            self.active_user = cur_user
+            print("login succes")
+            return True
+        else:
+            print("login failed")
+            return False
 
     # There is no longer an active user
     def logout(self):
@@ -59,6 +64,11 @@ class ManageUsers:
             del_user = self.active_user
             self.active_user = None
         self.users.remove(del_user)
-        # Delete the user in the database
+        self.dbHandler.remove_user(del_user.user_id)
+
+    # Updates the password of the given user or the active user if no user was given
+    def change_user_password(self, password, user = None):
+        cur_user = user if user is not None else self.active_user
+        self.dbHandler.update_user_password(cur_user.user_id, password)
 
 
