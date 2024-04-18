@@ -10,6 +10,14 @@ class ManageUsers:
         self.tickets = []
         self.active_user = None
         self.dbHandler = dbHandler
+        self.load_users()
+
+    # Loads all existing users from the database
+    def load_users(self):
+        data = self.dbHandler.read_names()
+        for user_data in data:
+            user = us.User(user_data[0], user_data[1], user_data[3])
+            self.users.append(user)
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
     def register_user(self, username, password1, password2):
@@ -35,10 +43,8 @@ class ManageUsers:
         # Check in the database if password is correct
         if self.dbHandler.check_username_password(username, password):
             self.active_user = cur_user
-            print("login succes")
             return True
         else:
-            print("login failed")
             return False
 
     # There is no longer an active user
