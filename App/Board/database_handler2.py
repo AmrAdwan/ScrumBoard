@@ -171,6 +171,27 @@ class DbHandler:
             self.error_message = f"Error updating hours: {err}"
 
 
+    def check_username_password(self, Username, Password):
+        try:
+            Username = Username.lower()
+            sql = "SELECT Password FROM users WHERE Username = %s"
+            val = (Username, )
+            self.mycursor.execute(sql, val)
+            result = self.mycursor.fetchone() # een rij
+
+            if result:
+                stored_password = result[0]
+
+                if stored_password == Password:
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        except mysql.connector.Error as err:
+            self.error_message = f"Error checking username_password: {err}"
+
+
 
         # Maak een instantie van de DbHandler
 db_handler = DbHandler()
