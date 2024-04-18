@@ -13,10 +13,12 @@
       <div class="bg-light p-2 shadow-sm rounded">
         <h4 class="bg-{{ color }} text-white p-2 rounded">{{ column }}</h4>
         <!-- Add Task Button -->
+        {% if column == "Backlog" %}
         <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
-          data-bs-target="#addTaskModal-{{ column|lower }}">
+          data-bs-target="#addTaskModal">
           Add Task
         </button>
+        {% endif %}
         <div class="card my-2">
           <div class="card-body">
             <h6 class="card-title">Task Title</h6>
@@ -34,29 +36,32 @@
   </div>
 </div>
 
-<!-- Modals for Adding Tasks -->
-{% for column, color in combined %}
-<div class="modal fade" id="addTaskModal-{{ column|lower }}" tabindex="-1"
-  aria-labelledby="addTaskModalLabel-{{ column|lower }}" aria-hidden="true">
+<!-- Modal for Adding Tasks -->
+<div class="modal fade" id="addTaskModal" tabindex="-1"
+  aria-labelledby="addTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addTaskModalLabel-{{ column|lower }}">Add Task to {{ column }}</h5>
+        <h5 class="modal-title" id="addTaskModalLabel">Create task</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form action="{{ url_for('add_task') }}" method="post">
           <div class="mb-3">
-            <label for="task-title-{{ column|lower }}" class="form-label">Title</label>
-            <input type="text" class="form-control" id="task-title-{{ column|lower }}" required>
+            <label for="task-title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="task-title" name="title" required>
           </div>
           <div class="mb-3">
-            <label for="task-description-{{ column|lower }}" class="form-label">Description</label>
-            <textarea class="form-control" id="task-description-{{ column|lower }}" required></textarea>
+            <label for="task-description" class="form-label">Description</label>
+            <textarea class="form-control" id="task-description" name="description" required></textarea>
           </div>
           <div class="mb-3">
-            <label for="task-assignee-{{ column|lower }}" class="form-label">Assignee</label>
-            <input type="text" class="form-control" id="task-assignee-{{ column|lower }}">
+            <label for="task-hours" class="form-label">Hours</label>
+            <input type="number" min="1" class="form-control" id="task-hours" name="hours" required>
+          </div>
+          <div class="mb-3">
+            <label for="task-assignee" class="form-label">Assignee</label>
+            <input type="text" class="form-control" id="task-assignee" name="assignee">
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Add Task</button>
@@ -66,5 +71,4 @@
     </div>
   </div>
 </div>
-{% endfor %}
 {% endblock %}

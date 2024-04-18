@@ -1,3 +1,5 @@
+import math
+
 import database_handler2 as db_handler
 import ticket as ti
 from enums import rights
@@ -40,6 +42,8 @@ class ManageTickets:
     # Creates a new ticket and adds to the database. Returns false if creation failed
     def create_ticket(self, title, description, status, hours):
         if self.manageUser.active_user is None or not self.manageUser.active_user.check_rights(rights.CREATE):
+            return False
+        if title == "" or description == "" or int(hours) <= 0:
             return False
         # add ticket to database and get the id
         ticket_id = self.dbHandler.add_ticket(title, description, hours, status.BACKLOG.value)

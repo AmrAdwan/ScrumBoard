@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, g, request, url_for
 import manage_users as ma_us
 import manage_tickets as ma_ti
 import database_handler2 as db_handler
+from enums import status
 
 app = Flask(__name__)
 
@@ -24,6 +25,12 @@ def board():
     combined = zip(columns, colors)
     return render_template('board.html', combined=list(combined))
 
+@app.route('/add_task', methods=["POST"])
+def add_task():
+    if request.method == "POST":
+        result = request.form
+        succes = manageTickets.create_ticket(result["title"], result["description"], status.BACKLOG, result["hours"])
+    return board()
 
 @app.route('/account')
 def account():
