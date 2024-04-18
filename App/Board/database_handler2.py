@@ -9,7 +9,7 @@ class DbHandler:
                 host="localhost",
                 user="root",
                 password="",
-                database="scrum2"
+                database="scrum"
             )
             self.mycursor = self.mydb.cursor()
         except mysql.connector.Error as err:
@@ -41,6 +41,7 @@ class DbHandler:
             val = (username, password, rightID)
             self.mycursor.execute(sql, val)
             self.mydb.commit()
+            return self.mycursor.lastrowid
         except mysql.connector.Error as err:
             self.error_message = "Error adding user: {}".format(err)
 

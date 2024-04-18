@@ -1,5 +1,6 @@
 import user as us
 import ticket as ti
+import database_handler2 as db_handler
 from enums import rights
 
 
@@ -10,6 +11,7 @@ class ManageUsers:
         self.users = []
         self.tickets = []
         self.active_user = None
+        self.dbHandler = db_handler.DbHandler()
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
     def register_user(self, username, password1, password2):
@@ -17,8 +19,8 @@ class ManageUsers:
             return False
         if self.get_user(username=username) is not None:
             return False
-        # add user to database and get the id
-        user_id = 0
+        # add user to database and get the id UNFINISHED
+        user_id = self.dbHandler.add_user(username, password1, rights.VIEW.value)
         new_user = us.User(user_id, username, rights.VIEW)
         self.users.append(new_user)
         self.active_user = new_user
@@ -68,8 +70,8 @@ class ManageUsers:
     def create_ticket(self, title, description, status, hours):
         if not self.active_user.check_rights(rights.CREATE):
             return False
-        # add ticket to database and get the id
-        ticket_id = 0
+        # add ticket to database and get the id UNFINISHED
+        ticket_id = self.dbHandler.add_ticket(title, description, hours, status.BACKLOG.value)
         new_ticket = ti.Ticket(ticket_id, title, description, status, hours)
         self.tickets.append(new_ticket)
         return True
