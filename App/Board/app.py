@@ -3,8 +3,10 @@ import manage_users as ma_us
 import manage_tickets as ma_ti
 import database_handler2 as db_handler
 from enums import status, rights
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
 dbHandler = db_handler.DbHandler()
 manageUsers = ma_us.ManageUsers(dbHandler)
@@ -46,6 +48,7 @@ def login():
         # print(result)
         valid_info = manageUsers.login(result["userName"], result["password"])
         if valid_info:
+            session["username"] = result["userName"]
             return redirect(url_for("board"))
     return render_template('login.html')
 
