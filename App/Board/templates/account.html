@@ -1,0 +1,67 @@
+{% extends 'main.html' %}
+{% block content %}
+
+<div class="container">
+  <header class="text-center mb-4">
+    <h1>Manage current_user.username Account </h1>
+  </header>
+  <div class="row">
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4" style="text-align: center;">
+      <img src="{{ url_for('static', filename='images/change_password.png') }}" class="mx-auto d-block img-thumbnail border-0">
+
+      <!-- Change Password Form -->
+      <form id="manageAccountForm" method="POST" class="needs-validation" novalidate
+        oninput='password2.setCustomValidity(password2.value != password1.value ? "Passwords do not match." : "")'>
+        <h6 id="ChangePasswordResult" style="color:gold"></h6>
+        <!-- <h1 class="h3 mb-3 font-weight-normal">Manage Account</h1> -->
+        <h6>Please fill the following info</h6>
+        <br>
+
+        <!-- UserName -->
+        <fieldset disabled>
+        <div class="form-group">
+          <!-- <label for="disabledTextInput" class="form-label">User Name</label> -->
+          <input id="Username" name="userName" type="text" class="form-control" placeholder="current_user.username">
+        </div>
+      </fieldset>
+        <br>
+
+        <!-- Old Password -->
+        <div class="form-group">
+          <input id="oldPassword" name="oldPassword1" type="password" class="form-control" placeholder="Old Password"
+            required>
+          <div class="invalid-feedback">Password is required</div>
+        </div>
+        <br>
+
+        <!-- New Password -->
+        <div class="form-group">
+          <input id="ChangePassword" name="ChangePassword" type="password" class="form-control" placeholder="New Password"
+            required>
+          <div class="invalid-feedback">Please confirm your password</div>
+        </div>
+        <br>
+
+        <!-- Confirm New Password -->
+        <div class="form-group">
+          <input id="confChangePassword" name="confChangePassword" type="password" class="form-control" placeholder="Confirm New Password"
+            required>
+          <div class="invalid-feedback">Please confirm your password</div>
+        </div>
+        <br>
+
+        <!-- Change Password Button -->
+        <div class="form-group">
+          <button class="btn btn-md btn-warning" type="submit"><i class="fas fa-plus"></i> Change Password</button>
+          <button class="btn btn-md btn-dark" type="reset"><i class="fas fa-redo"></i> Reset</button>
+        </div>
+        <br>
+        <br>
+      </form>
+      <!-- End Change Password Form -->
+    </div>
+    <div class="col-sm-4"></div>
+  </div>
+</div>
+{% endblock %}

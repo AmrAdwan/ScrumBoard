@@ -5,11 +5,13 @@
   <div class="row">
     <div class="col-sm-4"></div>
     <div class="col-sm-4" style="text-align: center;">
+      <img src="{{ url_for('static', filename='images/create_account.png') }}" class="mx-auto d-block img-thumbnail border-0">
+
       <!-- Sign Up Form -->
       <form id="registerForm" method="POST" class="needs-validation" novalidate
         oninput='password2.setCustomValidity(password2.value != password1.value ? "Passwords do not match." : "")'>
         <h6 id="registerOutputResult" style="color:gold"></h6>
-        <h1 class="h3 mb-3 font-weight-normal">Create Account</h1>
+        <!-- <h1 class="h3 mb-3 font-weight-normal">Create Account</h1> -->
         <h6>Please fill the following info</h6>
 
         <!-- UserName -->
