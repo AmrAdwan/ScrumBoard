@@ -36,7 +36,7 @@ def login():
         print(result)
         valid_info = manageUsers.login(result["userName"], result["password"])
         if valid_info:
-            return render_template('board.html')
+            return redirect(url_for("board"))
     return render_template('login.html')
 
 
@@ -46,7 +46,7 @@ def register():
         result = request.form
         valid_info = manageUsers.register_user(result["userName"], result["password1"], result["password2"])
         if valid_info:
-            return render_template('login.html')
+            return redirect(url_for("login"))
     return render_template('register.html')
 
 def check_user_authentication():
