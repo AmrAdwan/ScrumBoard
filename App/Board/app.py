@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, g, request, url_for
+from flask import Flask, redirect, render_template, g, request, session, url_for
 import manage_users as ma_us
 import manage_tickets as ma_ti
 import database_handler2 as db_handler
