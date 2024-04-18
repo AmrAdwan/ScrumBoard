@@ -49,7 +49,14 @@ def register():
             return redirect(url_for("login"))
     return render_template('register.html')
 
+@app.route('/home')
+def logout():
+    manageUsers.logout()
+    return redirect(url_for("home"))
+
 def check_user_authentication():
+    if manageUsers.active_user != None:
+        return True
     return False  
 
 if __name__ == "__main__":
