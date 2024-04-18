@@ -1,17 +1,15 @@
 import user as us
-import ticket as ti
-import database_handler2 as db_handler
 from enums import rights
 
 
 # Class to manage all users
 class ManageUsers:
 
-    def __init__(self):
+    def __init__(self, dbHandler):
         self.users = []
         self.tickets = []
         self.active_user = None
-        self.dbHandler = db_handler.DbHandler()
+        self.dbHandler = dbHandler
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
     def register_user(self, username, password1, password2):
@@ -54,24 +52,3 @@ class ManageUsers:
                     return user
         return None
 
-    # Gets a ticket by id or by title or returns None if it cannot be found
-    def get_ticket(self, ticket_id=-1, title=""):
-        if ticket_id != -1:
-            for ticket in self.tickets:
-                if ticket.ticket_id == ticket_id:
-                    return ticket
-        elif title != "":
-            for ticket in self.tickets:
-                if ticket.title == title:
-                    return ticket
-        return None
-
-    # Creates a new ticket and adds to the database. Returns false if creation failed
-    def create_ticket(self, title, description, status, hours):
-        if not self.active_user.check_rights(rights.CREATE):
-            return False
-        # add ticket to database and get the id UNFINISHED
-        ticket_id = self.dbHandler.add_ticket(title, description, hours, status.BACKLOG.value)
-        new_ticket = ti.Ticket(ticket_id, title, description, status, hours)
-        self.tickets.append(new_ticket)
-        return True

@@ -1,9 +1,13 @@
 from flask import Flask, redirect, render_template, g, request, url_for
 import manage_users as ma_us
+import manage_tickets as ma_ti
+import database_handler2 as db_handler
 
 app = Flask(__name__)
 
-manageUsers = ma_us.ManageUsers()
+dbHandler = db_handler.DbHandler()
+manageUsers = ma_us.ManageUsers(dbHandler)
+manageTickets = ma_ti.ManageTickets(dbHandler, manageUsers)
 
 @app.before_request
 def before_request():
