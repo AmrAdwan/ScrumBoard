@@ -39,7 +39,7 @@ class ManageTickets:
 
     # Creates a new ticket and adds to the database. Returns false if creation failed
     def create_ticket(self, title, description, status, hours):
-        if not self.manageUser.active_user.check_rights(rights.CREATE):
+        if self.manageUser.active_user is None or not self.manageUser.active_user.check_rights(rights.CREATE):
             return False
         # add ticket to database and get the id
         ticket_id = self.dbHandler.add_ticket(title, description, hours, status.BACKLOG.value)
@@ -51,7 +51,7 @@ class ManageTickets:
     def edit_ticket(self, ticket = None, title = None, description = None, status = None, hours = None):
         if title is None and description is None and hours is None and status is not None:
             self.change_ticket_status(ticket, status)
-        if not self.manageUser.active_user.check_rights(rights.EDIT):
+        if self.manageUser.active_user is None or not self.manageUser.active_user.check_rights(rights.EDIT):
             return False
         # elif (not self.manageUser.active_user.check_rights(rights.EDIT)) and (title is not None or description is not None or hours is not None):
         #     return False
@@ -70,7 +70,7 @@ class ManageTickets:
 
     # Change the status of the given ticket or the active ticket
     def change_ticket_status(self, ticket = None, status = None):
-        if not self.manageUser.active_user.check_rights(rights.DRAG):
+        if self.manageUser.active_user is None or not self.manageUser.active_user.check_rights(rights.DRAG):
             return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         cur_ticket.edit_ticket(users=None, title=None, description=None, status=status, hours=None)
@@ -79,7 +79,7 @@ class ManageTickets:
         return True
 
     def remove_ticket(self, ticket = None):
-        if not self.manageUser.active_user.check_rights(rights.CREATE):
+        if self.manageUser.active_user is None or not self.manageUser.active_user.check_rights(rights.CREATE):
             return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         if cur_ticket == self.active_ticket:
@@ -89,6 +89,11 @@ class ManageTickets:
 
     # Adds the given user to the given ticket. Uses active user and ticket if not given
     def add_user_to_ticket(self, user = None, ticket = None):
+        if self.manageUser.active_user is None:
+            return False
+        if not (self.manageUser.active_user.check_rights(rights.ALL) or (
+                self.manageUser.active_user.check_rights(rights.CLAIM) and self.manageUser.active_user == user)):
+            return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         cur_user = user if user is not None else self.manageUser.active_user
         cur_user.assign_ticket(cur_ticket)
@@ -97,6 +102,11 @@ class ManageTickets:
 
     # Removes the given user from the given ticket. Uses active user and ticket if not given
     def remove_user_from_ticket(self, user = None, ticket = None):
+        if self.manageUser.active_user is None:
+            return False
+        if not (self.manageUser.active_user.check_rights(rights.ALL) or (
+                self.manageUser.active_user.check_rights(rights.CLAIM) and self.manageUser.active_user == user)):
+            return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         cur_user = user if user is not None else self.manageUser.active_user
         cur_user.remove_ticket(cur_ticket)
