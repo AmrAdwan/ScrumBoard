@@ -2,8 +2,11 @@ from flask import Flask, redirect, render_template, g, request, url_for
 import manage_users as ma_us
 import manage_tickets as ma_ti
 import database_handler2 as db_handler
+from enums import status, rights
+import os
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
 dbHandler = db_handler.DbHandler()
 manageUsers = ma_us.ManageUsers(dbHandler)
@@ -22,8 +25,17 @@ def board():
     columns = ['Backlog', 'Ready', 'In Progress', 'Review', 'Done']
     colors = ['danger', 'warning', 'info', 'secondary', 'success']
     combined = zip(columns, colors)
-    return render_template('board.html', combined=list(combined))
+    valid_users = manageUsers.getUsersByRights(rights.DRAG)
+    return render_template('board.html', combined=list(combined), valid_users=valid_users)
 
+@app.route('/add_task', methods=["POST"])
+def add_task():
+    if request.method == "POST":
+        result = request.form
+        create_success = manageTickets.create_ticket(result["title"], result["description"], status.BACKLOG, result["hours"])
+        if create_success and result["assignee"] != -1:
+            user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(result["assignee"]), manageTickets.get_ticket(title=result["title"]))
+    return board()
 
 @app.route('/account')
 def account():
@@ -33,9 +45,10 @@ def account():
 def login():
     if request.method == "POST":
         result = request.form
-        print(result)
+        # print(result)
         valid_info = manageUsers.login(result["userName"], result["password"])
         if valid_info:
+            session["username"] = result["userName"]
             return redirect(url_for("board"))
     return render_template('login.html')
 

@@ -3,7 +3,7 @@
 
 <div class="container">
   <header class="text-center mb-4">
-    <h1>Manage current_user.username Account </h1>
+    <h1>Manage {{session['username']}} Account </h1>
   </header>
   <div class="row">
     <div class="col-sm-4"></div>
@@ -22,7 +22,7 @@
         <fieldset disabled>
         <div class="form-group">
           <!-- <label for="disabledTextInput" class="form-label">User Name</label> -->
-          <input id="Username" name="userName" type="text" class="form-control" placeholder="current_user.username">
+          <input id="Username" name="userName" type="text" class="form-control" placeholder={{session['username']}}>
         </div>
       </fieldset>
         <br>

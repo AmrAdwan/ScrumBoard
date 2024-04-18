@@ -14,7 +14,6 @@ body {
 footer {
   flex-shrink: 0;
   text-align: center;
-  background: #333; 
-  color: white; 
-
+  background: #333;
+  color: white;
 }
