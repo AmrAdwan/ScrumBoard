@@ -83,4 +83,12 @@ class ManageUsers:
         cur_user = user if user is not None else self.active_user
         self.dbHandler.update_user_password(cur_user.user_id, password)
 
+    # Returns a list of all user with the same rights as given or higher
+    def getUsersByRights(self, minRight):
+        validUsers = []
+        for user in self.users:
+            if user.check_rights(minRight):
+                validUsers.append(user)
+        return validUsers
+
 

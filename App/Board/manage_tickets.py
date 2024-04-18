@@ -95,7 +95,7 @@ class ManageTickets:
     def add_user_to_ticket(self, user = None, ticket = None):
         if self.manageUser.active_user is None:
             return False
-        if not (self.manageUser.active_user.check_rights(rights.ALL) or (
+        if not (self.manageUser.active_user.check_rights(rights.CREATE) or (
                 self.manageUser.active_user.check_rights(rights.CLAIM) and self.manageUser.active_user == user)):
             return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
@@ -103,12 +103,13 @@ class ManageTickets:
         cur_user.assign_ticket(cur_ticket)
         cur_ticket.assign_user(cur_user)
         self.dbHandler.add_user_to_ticket(cur_user.user_id, cur_ticket.ticket_id)
+        return True
 
     # Removes the given user from the given ticket. Uses active user and ticket if not given
     def remove_user_from_ticket(self, user = None, ticket = None):
         if self.manageUser.active_user is None:
             return False
-        if not (self.manageUser.active_user.check_rights(rights.ALL) or (
+        if not (self.manageUser.active_user.check_rights(rights.CREATE) or (
                 self.manageUser.active_user.check_rights(rights.CLAIM) and self.manageUser.active_user == user)):
             return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
@@ -116,3 +117,4 @@ class ManageTickets:
         cur_user.remove_ticket(cur_ticket)
         cur_ticket.remove_user(cur_user)
         self.dbHandler.remove_user_from_ticket(cur_user.user_id, cur_ticket.ticket_id)
+        return True
