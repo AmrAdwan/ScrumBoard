@@ -33,7 +33,7 @@ def account():
 def login():
     if request.method == "POST":
         result = request.form
-        print(result)
+        # print(result)
         valid_info = manageUsers.login(result["userName"], result["password"])
         if valid_info:
             return redirect(url_for("board"))

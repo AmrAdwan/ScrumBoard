@@ -14,9 +14,10 @@ class ManageUsers:
 
     # Loads all existing users from the database
     def load_users(self):
-        data = self.dbHandler.read_names()
+        data = self.dbHandler.read_users()
         for user_data in data:
-            user = us.User(user_data[0], user_data[1], user_data[3])
+            right = rights(user_data[3])
+            user = us.User(user_data[0], user_data[1], right)
             self.users.append(user)
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
@@ -41,7 +42,7 @@ class ManageUsers:
             return False
 
         # Check in the database if password is correct
-        if self.dbHandler.check_username_password(username, password):
+        if self.dbHandler.check_username_password(username, cur_user.user_id, password):
             self.active_user = cur_user
             return True
         else:
@@ -65,12 +66,17 @@ class ManageUsers:
 
     # Deletes the given user or the active user if no user was given
     def remove_user(self, user = None):
-        del_user = user
-        if del_user is None:
+        if user is None:
             del_user = self.active_user
             self.active_user = None
+        else:
+            if self.active_user.check_rights(rights.ALL):
+                del_user = user
+            else:
+                return False
         self.users.remove(del_user)
         self.dbHandler.remove_user(del_user.user_id)
+        return True
 
     # Updates the password of the given user or the active user if no user was given
     def change_user_password(self, password, user = None):

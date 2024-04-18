@@ -1,15 +1,29 @@
 import database_handler2 as db_handler
 import ticket as ti
 from enums import rights
+from enums import status
 
 # Class to manage all users
 class ManageTickets:
 
-    def __init__(self, manageUser, dbHandler):
+    def __init__(self, dbHandler, manageUser):
         self.tickets = []
         self.active_ticket = None
-        self.manageUser = manageUser
         self.dbHandler = dbHandler
+        self.manageUser = manageUser
+        self.load_tickets()
+
+    # Loads all existing tickets from the database
+    def load_tickets(self):
+        data = self.dbHandler.read_tickets()
+        for tic_data in data:
+            stat = status(tic_data[4])
+            ticket = ti.Ticket(tic_data[0], tic_data[1], tic_data[2], stat, tic_data[3])
+            self.tickets.append(ticket)
+        userTicketData = self.dbHandler.get_tickets_data()
+        # adds users to tickets
+        for utData in userTicketData:
+            self.get_ticket(utData[1]).users.append(self.manageUser.get_user(utData[0]))
 
     # Gets a ticket by id or by title or returns None if it cannot be found
     def get_ticket(self, ticket_id=-1, title=""):
@@ -63,6 +77,15 @@ class ManageTickets:
         if status is not None:
             self.dbHandler.update_ticket_status(cur_ticket.ticket_id, status)
         return True
+
+    def remove_ticket(self, ticket = None):
+        if not self.manageUser.active_user.check_rights(rights.CREATE):
+            return False
+        cur_ticket = ticket if ticket is not None else self.active_ticket
+        if cur_ticket == self.active_ticket:
+            self.active_ticket = None
+        self.tickets.remove(cur_ticket)
+        self.dbHandler.remove_ticket(cur_ticket.id)
 
     # Adds the given user to the given ticket. Uses active user and ticket if not given
     def add_user_to_ticket(self, user = None, ticket = None):
