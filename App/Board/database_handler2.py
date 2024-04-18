@@ -1,4 +1,5 @@
 import mysql.connector
+import hashlib
 
 # hierbij wordt de classe aangemaakt
 class DbHandler:
@@ -35,20 +36,20 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = "ERROR fetching information for tickets data failed: {}".format(err)
 
-    # Creates a user and returns its id if successful
-    def add_user(self, username, password, rightID):
-        try:
-            sql = "INSERT INTO users(username, password, rightID) VALUES (%s,%s,%s)"
-            val = (username, password, rightID)
-            self.mycursor.execute(sql, val)
-            self.mydb.commit()
-            return self.mycursor.lastrowid
-        except mysql.connector.Error as err:
-            self.error_message = "Error adding user: {}".format(err)
+    # # Creates a user and returns its id if successful
+    # def add_user(self, username, password, rightID):
+    #     try:
+    #         sql = "INSERT INTO users(username, password, rightID) VALUES (%s,%s,%s)"
+    #         val = (username, password, rightID)
+    #         self.mycursor.execute(sql, val)
+    #         self.mydb.commit()
+    #         return self.mycursor.lastrowid
+    #     except mysql.connector.Error as err:
+    #         self.error_message = "Error adding user: {}".format(err)
 
     # Creates a ticket and returns its id if successful
     def add_ticket(self, Title, Description, Hours, statusID):
-        try: 
+        try:
             ticket_sql = "INSERT INTO tickets(title, description, hours, statusID) VALUES (%s,%s,%s,%s)"
             ticket_val = (Title, Description, Hours, statusID)
             self.mycursor.execute(ticket_sql, ticket_val)
@@ -138,15 +139,6 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = f"Error updating username: {err}"
 
-    def update_user_password(self, UserID, Password):
-        try:
-            sql = "UPDATE users SET password = %s WHERE userID = %s"
-            val = (Password, UserID)
-            self.mycursor.execute(sql, val)
-            self.mydb.commit()
-        except mysql.connector.Error as err:
-            self.error_message = f"Error updating password: {err}"
-
     def remove_user(self, UserID):
         try:
             sql_userticket = "DELETE FROM userticket WHERE UserID = %s"
@@ -171,35 +163,70 @@ class DbHandler:
             self.error_message = f"Error updating hours: {err}"
 
 
-    def check_username_password(self, Username, Password):
+    def check_username_password(self, Username, UserID, password):
         try:
+            password_bytes = password.encode('utf-8')
+            hash_object = hashlib.sha256(password_bytes)
+            password = hash_object.hexdigest()
+
             Username = Username.lower()
-            sql = "SELECT Password FROM users WHERE Username = %s"
-            val = (Username, )
+            sql = "SELECT password FROM users WHERE Username = %s AND UserID = %s"
+            val = (Username, UserID)
             self.mycursor.execute(sql, val)
             result = self.mycursor.fetchone() # een rij
 
             if result:
                 stored_password = result[0]
 
-                if stored_password == Password:
+                if stored_password == password:
                     return True
                 else:
+                    print(stored_password)
+                    print(password)
                     return False
             else:
                 return False
         except mysql.connector.Error as err:
             self.error_message = f"Error checking username_password: {err}"
+            return False
+    
+    def add_user(self, username, password, rightID):
+        try:
+            password_bytes = password.encode('utf-8')
+            hash_object = hashlib.sha256(password_bytes)
+            password = hash_object.hexdigest()
+            sql_add_user = "INSERT INTO users(username, password, rightID) VALUES (%s,%s,%s)"
+            val_add_user = (username, password, rightID)
+            self.mycursor.execute(sql_add_user, val_add_user)
+            self.mydb.commit()
+            return self.mycursor.lastrowid
+        except mysql.connector.Error as err:
+            self.error_message = "Error adding user: {}".format(err)
+
+    def update_user_password(self, UserID, password):
+        try:
+            password_bytes = password.encode('utf-8')
+            hash_object = hashlib.sha256(password_bytes)
+            password = hash_object.hexdigest()
+
+            sql = "UPDATE users SET password = %s WHERE userID = %s"
+            val = (password, UserID)
+            self.mycursor.execute(sql, val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error updating password: {err}"
 
 
-
-        # Maak een instantie van de DbHandler
+# Maak een instantie van de DbHandler
 db_handler = DbHandler()
 
 
+# db_handler.update_user_password(7, "newpassword123")
+# db_handler.check_username_password("newusername1", 10, "newpassword12345")
+
 # toevoegen nieuwe user 
 # hier moet je dingen kunnen invoegen die uit de gebruikers formulier komen ("Username", "password", "rights")
-# db_handler.add_user("newusername", "newpassword123", 1)  # Voeg nieuwe gebruiker toe
+# db_handler.add_user("newusername1", "newpassword12345", 1)  # Voeg nieuwe gebruiker toe
 
 # toevoegen nieuw ticket
 #hier moet je dingen kunnen invoegen die uit het tickets formulier komen ("title", "description", "hours", "status")
