@@ -1,6 +1,7 @@
 import mysql.connector
 import hashlib
 
+
 # hierbij wordt de classe aangemaakt
 class DbHandler:
     def __init__(self):
@@ -16,44 +17,25 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = "Database connection error: {}".format(err)
 
-    def read_users(self):
+    def read_names(self):
         try:
             self.mycursor.execute("SELECT userID, username, password, RightID FROM users")
             return self.mycursor.fetchall()
         except mysql.connector.Error as err:
             self.error_message = "Error fetching user data: {}".format(err)
             return []
-
-    # Gets all ticket data and returns it as a list of tuples
-    def read_tickets(self):
-        try:
-            self.mycursor.execute("SELECT ticketID, title, description, hours, statusID FROM tickets")
-            return self.mycursor.fetchall()
-        except mysql.connector.Error as err:
-            self.error_message = "Error fetching ticket data: {}".format(err)
-            return []
+        
 
     def get_tickets_data(self):
         try:
-            self.mycursor.execute("""SELECT users.userID, tickets.ticketID, tickets.title, tickets.description, tickets.hours, status.statusname FROM UserTicket 
+            self.mycursor.execute("""SELECT users.username, tickets.title, tickets.description, tickets.hours, status.statusname FROM UserTicket 
                                   INNER JOIN users on userticket.userID = users.userID 
-                                  INNER JOIN rights on users.rightID = rights.rightID
                                   INNER JOIN tickets on userticket.ticketID = tickets.ticketID
                                   INNER JOIN status on tickets.statusID = status.statusID""")
             return self.mycursor.fetchall()
         except mysql.connector.Error as err:
             self.error_message = "ERROR fetching information for tickets data failed: {}".format(err)
 
-    # # Creates a user and returns its id if successful
-    # def add_user(self, username, password, rightID):
-    #     try:
-    #         sql = "INSERT INTO users(username, password, rightID) VALUES (%s,%s,%s)"
-    #         val = (username, password, rightID)
-    #         self.mycursor.execute(sql, val)
-    #         self.mydb.commit()
-    #         return self.mycursor.lastrowid
-    #     except mysql.connector.Error as err:
-    #         self.error_message = "Error adding user: {}".format(err)
 
     # Creates a ticket and returns its id if successful
     def add_ticket(self, Title, Description, Hours, statusID):
@@ -189,6 +171,8 @@ class DbHandler:
                 if stored_password == password:
                     return True
                 else:
+                    print(stored_password)
+                    print(password)
                     return False
             else:
                 return False
@@ -196,13 +180,17 @@ class DbHandler:
             self.error_message = f"Error checking username_password: {err}"
             return False
     
-    def add_user(self, username, password, rightID):
+    def add_user(self, username, password, rightID, profile_picture):
         try:
             password_bytes = password.encode('utf-8')
             hash_object = hashlib.sha256(password_bytes)
             password = hash_object.hexdigest()
-            sql_add_user = "INSERT INTO users(username, password, rightID) VALUES (%s,%s,%s)"
-            val_add_user = (username, password, rightID)
+            
+            with open(profile_picture, 'rb') as file:
+                profile_picture_data = file.read()
+            
+            sql_add_user = "INSERT INTO users(username, password, rightID, profile_picture) VALUES (%s, %s, %s, %s)"
+            val_add_user = (username, password, rightID, profile_picture_data)
             self.mycursor.execute(sql_add_user, val_add_user)
             self.mydb.commit()
             return self.mycursor.lastrowid
@@ -222,21 +210,57 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = f"Error updating password: {err}"
 
+    def update_profile_picture(self, UserID, profile_picture):
+        try:
+            with open(profile_picture, 'rb') as file:
+                profile_picture_data = file.read()
+        
+            sql_profile_picture = "UPDATE users SET profile_picture = %s WHERE UserID = %s"
+            val_profile_picture = (profile_picture_data, UserID)
+            self.mycursor.execute(sql_profile_picture,val_profile_picture)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error inserting profile picture: {err}"
+
+    def get_profile_picture(self, UserID):
+        try:
+            sql_get_picture = "SELECT profile_picture FROM users WHERE UserID = %s"
+            val_get_picture = (UserID,)
+            self.mycursor.execute(sql_get_picture, val_get_picture)
+            
+            profile_picture_data = self.mycursor.fetchone()
+            
+            return profile_picture_data[0] if profile_picture_data else None
+        except mysql.connector.Error as err:
+            self.error_message = f"Error retrieving profile picture: {err}"
+            return None
+
 
 # Maak een instantie van de DbHandler
 db_handler = DbHandler()
 
+# get_profile_picture van UserID, haal foto op
+# if db_handler.get_profile_picture(12):
+#     print("gelukt")
+
+#update profile picture
+#profile_picture_path = "C:\\Users\\Remco H\\OneDrive\\Documenten\\educom\\aap.jpeg"
+#db_handler.update_profile_picture(7, profile_picture_path)
+
+# db_handler.update_profile_picture(1, "https://nos.nl/nieuwsuur/artikel/2183479-krijgt-deze-makaak-aap-alsnog-het-auteursrecht-op-zijn-selfie")
+# db_handler.add_profile_picture(2, "fotojpeg.jpeg")
 
 # db_handler.update_user_password(7, "newpassword123")
 # db_handler.check_username_password("newusername1", 10, "newpassword12345")
 
 # toevoegen nieuwe user 
-# hier moet je dingen kunnen invoegen die uit de gebruikers formulier komen ("Username", "password", "rights")
-# db_handler.add_user("newusername1", "newpassword12345", 1)  # Voeg nieuwe gebruiker toe
+# profile_picture_path = "C:\\Users\\Remco H\\OneDrive\\Documenten\\educom\\aap.jpeg"
+# db_handler.add_user("newusername1", "newpassword12345", 1, profile_picture_path)
+
 
 # toevoegen nieuw ticket
 #hier moet je dingen kunnen invoegen die uit het tickets formulier komen ("title", "description", "hours", "status")
-#db_handler.add_ticket("testen applicatie", "wij gaan de applicatie testen", 1, 3)
+# db_handler.add_ticket("wachten op koffie", "wij gaan niet werken tot er nieuwe koffie is", 1, 3)
 
 
 # updaten ticket status
@@ -270,9 +294,9 @@ db_handler = DbHandler()
 #db_handler.remove_user_from_ticket(2,3)
 
 # Haal de namen op en druk de eerste drie af
-# names = db_handler.read_users()
-# for user in names[:3]:
-#     print("UserID:", user[0], "Username:", user[1], "Password", user[2], "rightID", user[3])
+names = db_handler.read_names()
+for user in names[:3]:
+    print("UserID:", user[0], "Username:", user[1], "Password", user[2], "rightID", user[3])
 
 
 
