@@ -21,13 +21,14 @@ class ManageUsers:
             self.users.append(user)
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
-    def register_user(self, username, password1, password2):
+    def register_user(self, username, password1, password2, picture = ""):
         if username == "" or password1 == "" or password1 != password2:
             return False
         if self.get_user(username=username) is not None:
             return False
         # add user to database and get the id UNFINISHED
-        user_id = self.dbHandler.add_user(username, password1, rights.VIEW.value)
+        picture = picture if picture != "" else "static/images/coolCat.jpg"
+        user_id = self.dbHandler.add_user(username, password1, rights.VIEW.value, picture)
         new_user = us.User(user_id, username, rights.VIEW)
         self.users.append(new_user)
         self.active_user = new_user
