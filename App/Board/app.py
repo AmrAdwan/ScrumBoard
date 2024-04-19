@@ -26,14 +26,15 @@ def board():
     colors = ['danger', 'warning', 'info', 'secondary', 'success']
     combined = zip(columns, colors)
     valid_users = manageUsers.getUsersByRights(rights.DRAG)
-    return render_template('board.html', combined=list(combined), valid_users=valid_users)
+    column_tickets = manageTickets.get_tickets_by_column(columns)
+    return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets)
 
 @app.route('/add_task', methods=["POST"])
 def add_task():
     if request.method == "POST":
         result = request.form
         create_success = manageTickets.create_ticket(result["title"], result["description"], status.BACKLOG, result["hours"])
-        if create_success and result["assignee"] != -1:
+        if create_success and int(result["assignee"]) != -1:
             user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(result["assignee"]), manageTickets.get_ticket(title=result["title"]))
     return board()
 

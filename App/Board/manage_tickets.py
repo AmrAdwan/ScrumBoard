@@ -118,3 +118,18 @@ class ManageTickets:
         cur_ticket.remove_user(cur_user)
         self.dbHandler.remove_user_from_ticket(cur_user.user_id, cur_ticket.ticket_id)
         return True
+
+    # Returns a dictionary with the column names and a list of tickets in that column
+    def get_tickets_by_column(self, columns):
+        column_names = {status.BACKLOG:columns[0], status.READY:columns[1], status.PROGRESS:columns[2],
+                        status.REVIEW:columns[3], status.DONE:columns[4]}
+        column_tickets = {}
+        for stat in status:
+            ticket_list = []
+            for ticket in self.tickets:
+                if ticket.status == stat:
+                    ticket_list.append(ticket)
+            column_tickets[column_names[stat]] = ticket_list
+        return column_tickets
+
+

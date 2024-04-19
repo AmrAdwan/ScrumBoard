@@ -22,11 +22,20 @@ class DbHandler:
             return self.mycursor.fetchall()
         except mysql.connector.Error as err:
             self.error_message = "Error fetching user data: {}".format(err)
-            return []    
+            return []
+
+    # Gets all ticket data and returns it as a list of tuples
+    def read_tickets(self):
+        try:
+            self.mycursor.execute("SELECT ticketID, title, description, hours, statusID FROM tickets")
+            return self.mycursor.fetchall()
+        except mysql.connector.Error as err:
+            self.error_message = "Error fetching ticket data: {}".format(err)
+            return []
 
     def get_tickets_data(self):
         try:
-            self.mycursor.execute("""SELECT users.username, tickets.title, tickets.description, tickets.hours, status.statusname FROM UserTicket 
+            self.mycursor.execute("""SELECT users.userID, tickets.ticketID, tickets.title, tickets.description, tickets.hours, status.statusname FROM UserTicket 
                                   INNER JOIN users on userticket.userID = users.userID 
                                   INNER JOIN tickets on userticket.ticketID = tickets.ticketID
                                   INNER JOIN status on tickets.statusID = status.statusID""")
@@ -292,9 +301,9 @@ db_handler = DbHandler()
 #db_handler.remove_user_from_ticket(2,3)
 
 # Haal de namen op en druk de eerste drie af
-names = db_handler.read_names()
-for user in names[:3]:
-    print("UserID:", user[0], "Username:", user[1], "Password", user[2], "rightID", user[3])
+# names = db_handler.read_users()
+# for user in names[:3]:
+#     print("UserID:", user[0], "Username:", user[1], "Password", user[2], "rightID", user[3])
 
 
 

@@ -19,16 +19,21 @@
           Add Task
         </button>
         {% endif %}
+        {% for ticket in column_tickets[column] %}
         <div class="card my-2">
           <div class="card-body">
-            <h6 class="card-title">Task Title</h6>
-            <p class="card-text">Description of the task.</p>
-            <p class="card-text"><small class="text-muted">Assigned to Person A</small></p>
+            <h6 class="card-title">{{ticket.title}}</h6>
+            <p class="card-text">{{ticket.description}}</p>
+            {% for user in ticket.users %}
+              <p class="card-text"><small class="text-muted">{{user.username}}</small></p>
+            {% endfor %}
+            <p class="card-text">Hours: {{ticket.hours}}</p>
             <!-- Task Action Buttons -->
             <button type="button" class="btn btn-sm btn-primary">Edit</button>
             <button type="button" class="btn btn-sm btn-danger">Delete</button>
           </div>
         </div>
+        {% endfor %}
         <!-- Additional cards for each status -->
       </div>
     </div>
