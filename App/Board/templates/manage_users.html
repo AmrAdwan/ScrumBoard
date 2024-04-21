@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <header class="text-center mb-4">
+    <h1>User Management</h1>
+  </header>
+
+  <!-- User List -->
+  <div class="list-group">
+    {% for user in users %}
+    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+      <span>{{ user.username }}</span>
+      <!-- Form for user management -->
+      <div>
+        <form action="{{ url_for('change_user_rights', user_id=user.user_id) }}" method="post">
+          <button type="submit" class="btn btn-outline-secondary btn-sm">Change Rights</button>
+        </form>
+        <br>
+        <form action="{{ url_for('reset_user_password', user_id=user.user_id) }}" method="get">
+          <button type="submit" class="btn btn-outline-warning btn-sm">Reset Password</button>
+        </form>
+        <br>
+        <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="post">
+          <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure?');">Delete
+            User</button>
+        </form>
+        <br>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Link to the Create User Page -->
+  <div class="mt-4 text-center">
+    <a href="{{ url_for('create_user') }}" class="btn btn-primary">Create New User</a>
+  </div>
+  <br>
+</div>
+
+
+{% endblock %}

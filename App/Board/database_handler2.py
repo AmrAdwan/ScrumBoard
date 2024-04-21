@@ -1,3 +1,4 @@
+import logging
 import mysql.connector
 import hashlib
 
@@ -204,18 +205,34 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = "Error adding user: {}".format(err)
 
+    # def update_user_password(self, UserID, password):
+    #     try:
+    #         password_bytes = password.encode('utf-8')
+    #         hash_object = hashlib.sha256(password_bytes)
+    #         password = hash_object.hexdigest()
+
+    #         sql = "UPDATE users SET password = %s WHERE userID = %s"
+    #         val = (password, UserID)
+    #         self.mycursor.execute(sql, val)
+    #         self.mydb.commit()
+    #     except mysql.connector.Error as err:
+    #         self.error_message = f"Error updating password: {err}"
+
     def update_user_password(self, UserID, password):
         try:
             password_bytes = password.encode('utf-8')
             hash_object = hashlib.sha256(password_bytes)
-            password = hash_object.hexdigest()
+            hashed_password = hash_object.hexdigest()
 
             sql = "UPDATE users SET password = %s WHERE userID = %s"
-            val = (password, UserID)
+            val = (hashed_password, UserID)
             self.mycursor.execute(sql, val)
             self.mydb.commit()
+            return True
         except mysql.connector.Error as err:
             self.error_message = f"Error updating password: {err}"
+            return False
+
 
     def update_profile_picture(self, UserID, profile_picture):
         try:
@@ -241,6 +258,22 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = f"Error retrieving profile picture: {err}"
             return None
+        
+    def update_user_rights(self, user_id, new_rights):
+        try:
+            sql = "UPDATE users SET RightID = %s WHERE userID = %s"
+            self.mycursor.execute(sql, (new_rights, user_id))
+            self.mydb.commit()
+            return True
+        except mysql.connector.Error as e:
+            logging.error(f"Failed to update user rights in the database: {e}")
+            self.mydb.rollback()
+            return False
+        
+    # Make sure to close the connection and cursor when the object is destroyed
+    def __del__(self):
+        self.mycursorcursor.close()
+        self.mydb.close()
 
 
 # Maak een instantie van de DbHandler
