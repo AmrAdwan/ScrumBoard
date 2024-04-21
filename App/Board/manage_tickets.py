@@ -89,7 +89,7 @@ class ManageTickets:
         if cur_ticket == self.active_ticket:
             self.active_ticket = None
         self.tickets.remove(cur_ticket)
-        self.dbHandler.remove_ticket(cur_ticket.id)
+        self.dbHandler.remove_ticket(cur_ticket.ticket_id)
 
     # Adds the given user to the given ticket. Uses active user and ticket if not given
     def add_user_to_ticket(self, user = None, ticket = None):

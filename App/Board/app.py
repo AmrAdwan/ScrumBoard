@@ -38,6 +38,13 @@ def add_task():
             user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(result["assignee"]), manageTickets.get_ticket(title=result["title"]))
     return board()
 
+@app.route('/del_task', methods=["POST"])
+def del_task():
+    if request.method == "POST":
+        result = request.form
+        remove_success = manageTickets.remove_ticket(manageTickets.get_ticket(int(result["ticket_id"])))
+    return board()
+
 @app.route('/account')
 def account():
     return render_template('account.html')
