@@ -169,7 +169,7 @@ def create_user():
             flash('Passwords do not match!', 'error')
             return redirect(url_for('create_user'))
 
-        if manageUsers.register_user(username, password, confirm_password):
+        if manageUsers.register_user(username, password, confirm_password, "", False):
             flash('User created successfully!', 'success')
             return redirect(url_for('manage_users'))
         else:

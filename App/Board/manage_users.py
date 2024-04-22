@@ -23,7 +23,7 @@ class ManageUsers:
             self.users.append(user)
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
-    def register_user(self, username, password1, password2, picture = ""):
+    def register_user(self, username, password1, password2, picture = "", autologin = True):
         if username == "" or password1 == "" or password1 != password2:
             return False
         if self.get_user(username=username) is not None:
@@ -38,7 +38,8 @@ class ManageUsers:
         user_id = self.dbHandler.add_user(username, password1, rights.VIEW.value, picture)
         new_user = us.User(user_id, username, rights.VIEW)
         self.users.append(new_user)
-        self.active_user = new_user
+        if autologin:
+            self.active_user = new_user
         return True
 
     # If the username exists and the password is correct, set the active user to the user with the given username
