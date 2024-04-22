@@ -16,14 +16,16 @@
         {% if column == "Backlog" %}
           {% if active_user is not none and active_user.check_rights_num(5) %}
             <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
-              data-bs-target="#addTaskModal">
+              data-bs-target="#addTaskModal" title="Add New Item">
               Add Task
             </button>
           {% else %}
-            <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
+            <div title="You do not have the rights to add a new task">
+              <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
               data-bs-target="#addTaskModal" disabled>
-              Add Task
-            </button>
+                Add Task
+              </button>
+            </div>
           {% endif %}
         {% endif %}
         {% for ticket in column_tickets[column] %}
@@ -37,17 +39,21 @@
             <p class="card-text">Hours: {{ticket.hours}}</p>
             <!-- Task Action Buttons -->
             {% if active_user is not none and active_user.check_rights_num(4) %}
-              <button type="button" class="btn btn-sm btn-primary">Edit</button>
+              <button type="button" class="btn btn-sm btn-primary" title="Edit task">Edit</button>
             {% else %}
-              <button type="button" class="btn btn-sm btn-primary" disabled>Edit</button>
+              <div title="You do not have the rights to edit a task">
+                <button type="button" class="btn btn-sm btn-primary" disabled>Edit</button>
+              </div>
             {% endif %}
 
             <form action = "{{ url_for('del_task') }}" method = "POST">
               <input type="hidden" name="ticket_id" value="{{ticket.ticket_id}}" required>
               {% if active_user is not none and active_user.check_rights_num(4) %}
-                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                <button type="submit" class="btn btn-sm btn-danger" title="Edit task">Delete</button>
               {% else %}
+              <div title="You do not have the rights to delete a task">
                 <button type="submit" class="btn btn-sm btn-danger" disabled>Delete</button>
+              </div>
               {% endif %}
             </form>
 
