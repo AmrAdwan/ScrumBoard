@@ -1,0 +1,19 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Change Rights for User: {{ user.username }}</h2>
+  <form action="{{ url_for('change_user_rights', user_id=user.user_id) }}" method="post">
+    <div class="mb-3">
+      <label for="userRights" class="form-label">New Rights:</label>
+      <select class="form-control" id="userRights" name="rights">
+        {% for right in rights %}
+        <option value="{{ right.value }}" {% if right.value==user.rights.value %}selected{% endif %}>{{ right.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Rights</button>
+  </form>
+</div>
+{% endblock %}

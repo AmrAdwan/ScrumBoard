@@ -1,6 +1,8 @@
+from flask import current_app
 import user as us
 from enums import rights
-
+import os
+import logging
 
 # Class to manage all users
 class ManageUsers:
@@ -27,7 +29,12 @@ class ManageUsers:
         if self.get_user(username=username) is not None:
             return False
         # add user to database and get the id UNFINISHED
-        picture = picture if picture != "" else "static/images/coolCat.jpg"
+        # picture = picture if picture != "" else "static/images/coolCat.jpg"
+        if picture != "":
+            picture = picture
+        elif not picture:
+            picture = os.path.join(current_app.root_path, 'static', 'images', 'coolCat.jpg')
+
         user_id = self.dbHandler.add_user(username, password1, rights.VIEW.value, picture)
         new_user = us.User(user_id, username, rights.VIEW)
         self.users.append(new_user)
@@ -66,24 +73,44 @@ class ManageUsers:
         return None
 
     # Deletes the given user or the active user if no user was given
-    def remove_user(self, user = None):
-        if user is None:
-            del_user = self.active_user
-            self.active_user = None
-        else:
-            if self.active_user.check_rights(rights.ALL):
-                del_user = user
-            else:
-                return False
-        self.users.remove(del_user)
-        self.dbHandler.remove_user(del_user.user_id)
-        return True
+    # def remove_user(self, user = None):
+    #     if user is None:
+    #         del_user = self.active_user
+    #         self.active_user = None
+    #     else:
+    #         if self.active_user.check_rights(rights.ALL):
+    #             del_user = user
+    #         else:
+    #             return False
+    #     self.users.remove(del_user)
+    #     self.dbHandler.remove_user(del_user.user_id)
+    #     return True
+
+    def remove_user(self, user_id=None):
+        user = self.get_user(user_id=user_id)
+        if user:
+            self.users = [u for u in self.users if u.user_id != user_id]
+            self.dbHandler.remove_user(user.user_id)
+            return True
+        return False
+
 
     # Updates the password of the given user or the active user if no user was given
-    def change_user_password(self, password, user = None):
-        cur_user = user if user is not None else self.active_user
-        self.dbHandler.update_user_password(cur_user.user_id, password)
+    # def change_user_password(self, password, user = None):
+    #     cur_user = user if user is not None else self.active_user
+    #     self.dbHandler.update_user_password(cur_user.user_id, password)
 
+    def change_user_password(self, password, user=None):
+        if user is None:
+            return False
+        try:
+            self.dbHandler.update_user_password(user.user_id, password)
+            return True
+        except Exception as e:
+            logging.error(f"Failed to update password for user {user.user_id}: {e}")
+            return False
+
+    
     # Returns a list of all user with the same rights as given or higher
     def getUsersByRights(self, minRight):
         validUsers = []
@@ -92,4 +119,21 @@ class ManageUsers:
                 validUsers.append(user)
         return validUsers
 
+    # Method to get the rights of the active user
+    def get_active_user_rights(self):
+        if self.active_user:
+            return self.active_user.rights.value
+        return None  # Or an appropriate value indicating no active user/rights
 
+    def change_user_rights(self, user_id, new_rights):
+        user = self.get_user(user_id=user_id)
+        if user:
+            user.set_rights(rights(new_rights))  # Update the rights
+            try:
+                self.dbHandler.update_user_rights(user.user_id, new_rights)
+                return True
+            except Exception as e:
+                logging.error(f"Failed to update database for user {user_id}: {e}")
+                return False
+        logging.warning(f"User not found with ID: {user_id}")
+        return False
