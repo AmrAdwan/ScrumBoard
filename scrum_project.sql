@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 17, 2024 at 11:25 AM
+-- Generation Time: Apr 19, 2024 at 05:30 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,50 @@ SET time_zone = "+00:00";
 --
 -- Database: `scrum`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `checklistitems`
+--
+
+CREATE TABLE `checklistitems` (
+  `ChecklistitemID` int(11) NOT NULL,
+  `ChecklistID` int(11) DEFAULT NULL,
+  `Description` varchar(1023) DEFAULT NULL,
+  `IsCompleted` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `checklistitems`
+--
+
+INSERT INTO `checklistitems` (`ChecklistitemID`, `ChecklistID`, `Description`, `IsCompleted`) VALUES
+(1, 1, 'inleiding', 1),
+(2, 1, 'middenstuk', 0),
+(3, 1, 'slot', 0),
+(4, 2, 'brainstormsessie', 1),
+(5, 2, 'uitvoeren', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `checklists`
+--
+
+CREATE TABLE `checklists` (
+  `ChecklistID` int(11) NOT NULL,
+  `TicketID` int(11) DEFAULT NULL,
+  `Title` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `checklists`
+--
+
+INSERT INTO `checklists` (`ChecklistID`, `TicketID`, `Title`) VALUES
+(1, 1, 'checklist opbouw'),
+(2, 2, 'code schrijven flask checklist');
 
 -- --------------------------------------------------------
 
@@ -85,8 +129,9 @@ CREATE TABLE `tickets` (
 --
 
 INSERT INTO `tickets` (`TicketID`, `Title`, `Description`, `Hours`, `StatusID`) VALUES
-(1, 'overleg', 'overleg over Python', 3, 1),
-(2, 'code schrijven flask', 'code schrijven flask', 6, 1);
+(1, 'overleg', 'overleg over Python', 7, 1),
+(2, 'code schrijven flask', 'code schrijven flask', 6, 1),
+(3, 'wachten op koffie', 'wij gaan niet werken tot er nieuwe koffie is', 1, 3);
 
 -- --------------------------------------------------------
 
@@ -98,17 +143,18 @@ CREATE TABLE `users` (
   `UserID` int(11) NOT NULL,
   `Username` varchar(255) DEFAULT NULL,
   `Password` varchar(255) DEFAULT NULL,
-  `RightID` int(11) DEFAULT NULL
+  `RightID` int(11) DEFAULT NULL,
+  `profile_picture` blob DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`UserID`, `Username`, `Password`, `RightID`) VALUES
-(1, 'Remco', '12345678', 5),
-(2, 'Thijs', '87654321', 4),
-(3, 'Amr', '12348765', 3);
+INSERT INTO `users` (`UserID`, `Username`, `Password`, `RightID`, `profile_picture`) VALUES
+(1, 'Remco', '01234567', 5, 0x68747470733a2f2f6e6f732e6e6c2f6e69657577737575722f617274696b656c2f323138333437392d6b72696a67742d64657a652d6d616b61616b2d6161702d616c736e6f672d6865742d6175746575727372656368742d6f702d7a696a6e2d73656c666965),
+(2, 'Thijs', '87654321', 4, 0x666f746f6a7065672e6a706567),
+(3, 'Amr', 'c152246c91ef62f553d2109b68698b19f7dd83328374abc489920bf2e2e23510', 3, NULL);
 
 -- --------------------------------------------------------
 
@@ -134,6 +180,20 @@ INSERT INTO `userticket` (`UserTicketID`, `UserID`, `TicketID`) VALUES
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `checklistitems`
+--
+ALTER TABLE `checklistitems`
+  ADD PRIMARY KEY (`ChecklistitemID`),
+  ADD KEY `ChecklistID` (`ChecklistID`);
+
+--
+-- Indexes for table `checklists`
+--
+ALTER TABLE `checklists`
+  ADD PRIMARY KEY (`ChecklistID`),
+  ADD KEY `TicketID` (`TicketID`);
 
 --
 -- Indexes for table `rights`
@@ -174,6 +234,18 @@ ALTER TABLE `userticket`
 --
 
 --
+-- AUTO_INCREMENT for table `checklistitems`
+--
+ALTER TABLE `checklistitems`
+  MODIFY `ChecklistitemID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `checklists`
+--
+ALTER TABLE `checklists`
+  MODIFY `ChecklistID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `rights`
 --
 ALTER TABLE `rights`
@@ -189,7 +261,7 @@ ALTER TABLE `status`
 -- AUTO_INCREMENT for table `tickets`
 --
 ALTER TABLE `tickets`
-  MODIFY `TicketID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `TicketID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -208,16 +280,28 @@ ALTER TABLE `userticket`
 --
 
 --
+-- Constraints for table `checklistitems`
+--
+ALTER TABLE `checklistitems`
+  ADD CONSTRAINT `checklistitems_ibfk_1` FOREIGN KEY (`ChecklistID`) REFERENCES `checklists` (`ChecklistID`);
+
+--
+-- Constraints for table `checklists`
+--
+ALTER TABLE `checklists`
+  ADD CONSTRAINT `checklists_ibfk_1` FOREIGN KEY (`TicketID`) REFERENCES `tickets` (`TicketID`);
+
+--
 -- Constraints for table `tickets`
 --
 ALTER TABLE `tickets`
-  ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`statusID`) REFERENCES `status` (`statusID`);
+  ADD CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`StatusID`) REFERENCES `status` (`StatusID`);
 
 --
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`rightID`) REFERENCES `rights` (`rightID`);
+  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`RightID`) REFERENCES `rights` (`RightID`);
 
 --
 -- Constraints for table `userticket`

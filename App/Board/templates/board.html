@@ -14,10 +14,17 @@
         <h4 class="bg-{{ color }} text-white p-2 rounded">{{ column }}</h4>
         <!-- Add Task Button -->
         {% if column == "Backlog" %}
-        <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
-          data-bs-target="#addTaskModal">
-          Add Task
-        </button>
+          {% if active_user is not none and active_user.check_rights_num(5) %}
+            <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
+              data-bs-target="#addTaskModal">
+              Add Task
+            </button>
+          {% else %}
+            <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
+              data-bs-target="#addTaskModal" disabled>
+              Add Task
+            </button>
+          {% endif %}
         {% endif %}
         {% for ticket in column_tickets[column] %}
         <div class="card my-2">
@@ -29,8 +36,21 @@
             {% endfor %}
             <p class="card-text">Hours: {{ticket.hours}}</p>
             <!-- Task Action Buttons -->
-            <button type="button" class="btn btn-sm btn-primary">Edit</button>
-            <button type="button" class="btn btn-sm btn-danger">Delete</button>
+            {% if active_user is not none and active_user.check_rights_num(4) %}
+              <button type="button" class="btn btn-sm btn-primary">Edit</button>
+            {% else %}
+              <button type="button" class="btn btn-sm btn-primary" disabled>Edit</button>
+            {% endif %}
+
+            <form action = "{{ url_for('del_task') }}" method = "POST">
+              <input type="hidden" name="ticket_id" value="{{ticket.ticket_id}}" required>
+              {% if active_user is not none and active_user.check_rights_num(4) %}
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              {% else %}
+                <button type="submit" class="btn btn-sm btn-danger" disabled>Delete</button>
+              {% endif %}
+            </form>
+
           </div>
         </div>
         {% endfor %}

@@ -28,7 +28,8 @@ def board():
     combined = zip(columns, colors)
     valid_users = manageUsers.getUsersByRights(rights.DRAG)
     column_tickets = manageTickets.get_tickets_by_column(columns)
-    return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets)
+    active_user = manageUsers.active_user
+    return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets, active_user=active_user)
 
 @app.route('/add_task', methods=["POST"])
 def add_task():
@@ -36,7 +37,14 @@ def add_task():
         result = request.form
         create_success = manageTickets.create_ticket(result["title"], result["description"], status.BACKLOG, result["hours"])
         if create_success and int(result["assignee"]) != -1:
-            user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(result["assignee"]), manageTickets.get_ticket(title=result["title"]))
+            user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(int(result["assignee"])), manageTickets.get_ticket(title=result["title"]))
+    return board()
+
+@app.route('/del_task', methods=["POST"])
+def del_task():
+    if request.method == "POST":
+        result = request.form
+        remove_success = manageTickets.remove_ticket(manageTickets.get_ticket(int(result["ticket_id"])))
     return board()
 
 @app.route('/account')

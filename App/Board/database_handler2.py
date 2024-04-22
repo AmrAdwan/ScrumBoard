@@ -33,6 +33,22 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = "Error fetching ticket data: {}".format(err)
             return []
+        
+    def read_checklists(self):
+        try:
+            self.mycursor.execute("SELECT Title FROM checklists")
+            return self.mycursor.fetchall()
+        except mysql.connector.Error as err:
+            self.error_message = "Error fetching checklists data: {}".format(err)
+            return []
+    
+    def read_checklistitems(self):
+        try:
+            self.mycursor.execute("SELECT Description, IsCompleted FROM checklistitems")
+            return self.mycursor.fetchall()
+        except mysql.connector.Error as err:
+            self.error_message = "Error fetching checklistitems data: {}".format(err)
+            return []
 
     def get_tickets_data(self):
         try:
@@ -96,15 +112,30 @@ class DbHandler:
 
     def remove_ticket(self, TicketID):
         try: 
+            
+            # hoe pak je dit aan, begin bij de tabel zonder fore
+            # Doel pak het bijbehorende ChecklistID van TicketID en verwijder daarna alle bijbehorende checklistitems van ChecklistID
+            sql_delete_checklistitems = """
+            DELETE FROM checklistitems WHERE ChecklistID IN (
+            SELECT ChecklistID FROM checklists WHERE TicketID = %s
+            )
+            """
+            self.mycursor.execute(sql_delete_checklistitems, (TicketID,))
 
-            sql_userticket = "DELETE FROM userticket WHERE TicketID = %s"
-            val_userticket = (TicketID,)
-            self.mycursor.execute(sql_userticket,val_userticket)
+            # Verwijder vervolgens alle checklists die dit TicketID gebruiken
+            sql_delete_checklists = "DELETE FROM checklists WHERE TicketID = %s"
+            self.mycursor.execute(sql_delete_checklists, (TicketID,))
 
-            sql_ticket = "DELETE FROM tickets WHERE TicketID = %s"
-            val_ticket = (TicketID,)
-            self.mycursor.execute(sql_ticket,val_ticket)
+            # Verwijder alle gebruikerstickets die dit TicketID gebruiken
+            sql_delete_userticket = "DELETE FROM userticket WHERE TicketID = %s"
+            self.mycursor.execute(sql_delete_userticket, (TicketID,))
+
+            # Verwijder het ticket zelf
+            sql_delete_ticket = "DELETE FROM tickets WHERE TicketID = %s"
+            self.mycursor.execute(sql_delete_ticket, (TicketID,))
+
             self.mydb.commit()
+
         except mysql.connector.Error as err:
             self.error_message = f"Error removing ticket: {err}"
             self.mydb.rollback() # alle wijzigingen terughalen, zodat je de database niet vernietigd
@@ -259,6 +290,7 @@ class DbHandler:
             self.error_message = f"Error retrieving profile picture: {err}"
             return None
         
+
     def update_user_rights(self, user_id, new_rights):
         try:
             sql = "UPDATE users SET RightID = %s WHERE userID = %s"
@@ -275,10 +307,105 @@ class DbHandler:
         self.mycursorcursor.close()
         self.mydb.close()
 
+    def add_checklist(self, ticketID, Title):
+        try:
+            sql = "INSERT INTO checklists (TicketID, Title) VALUES (%s, %s)"
+            val = (ticketID, Title)
+            self.mycursor.execute(sql,val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error inserting checklist: {err}"
+    
+    def add_checklistitem(self, ChecklistID, Description, IsCompleted):
+        try: 
+            sql = "INSERT INTO checklistitems(ChecklistID, Description, IsCompleted) VALUES (%s, %s, %s)"
+            val = (ChecklistID, Description, IsCompleted)
+            self.mycursor.execute(sql,val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error inserting checklistitems: {err}"
+    
+    def remove_checklistitem(self, ChecklistitemID):
+        try:
+            sql = "DELETE FROM checklistitems WHERE ChecklistitemID = %s"
+            val = (ChecklistitemID, )
+            self.mycursor.execute(sql, val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error deleting checklistitem: {err}"
+
+
+    def remove_checklist(self, ChecklistID):
+        try: 
+            sql_checklistitems = "DELETE FROM checklistitems WHERE ChecklistID = %s"
+            val_checklistitems = (ChecklistID, )
+            self.mycursor.execute(sql_checklistitems,val_checklistitems)
+
+            sql_checklist = "DELETE FROM checklists WHERE ChecklistID = %s"
+            val_checklist = (ChecklistID, )
+            self.mycursor.execute(sql_checklist, val_checklist)
+
+
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error deleting checklist: {err}"  
+
+    def update_checklistitems_iscompleted(self, ChecklistitemID, IsCompleted):
+        try:
+            sql = "UPDATE checklistitems SET IsCompleted = %s WHERE ChecklistitemID = %s"
+            val = (IsCompleted, ChecklistitemID)
+            self.mycursor.execute(sql,val)
+            self.mydb.commit()
+        
+        except mysql.connector.Error as err:
+            self.error_message = f"Error deleting checklist: {err}"  
+
+    def update_checklistitems_description(self, ChecklistitemID, Description):
+        try:
+            sql = "UPDATE checklistitems SET Description = %s WHERE ChecklistitemID = %s"
+            val = (Description, ChecklistitemID)
+            self.mycursor.execute(sql,val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error updating checklistitems description: {err}"
+
+    def update_checklists_title(self, ChecklistID, Title):
+        try: 
+            sql = "UPDATE checklists SET Title = %s WHERE ChecklistID = %s"
+            val = (Title, ChecklistID)
+            self.mycursor.execute(sql,val)
+            self.mydb.commit()
+        except mysql.connector.Error as err:
+            self.error_message = f"Error updating checklist title: {err}"
+
+
 
 # Maak een instantie van de DbHandler
 db_handler = DbHandler()
 
+
+db_handler.remove_ticket(3)
+#checklist_items = db_handler.read_checklistitems()
+#print(checklist_items)
+
+# db_handler.remove_ticket(2)
+
+# db_handler.update_checklists_title(2, "code schrijven flask")
+
+# db_handler.update_checklistitems_iscompleted(5,1)
+
+# db_handler.update_checklistitems_description(4, "brainstormsessie")
+# verder update remove tickets
+
+
+#db_handler.remove_checklist(4)
+
+# db_handler.remove_checklistitem(9)
+
+# db_handler.add_checklistitem(4, "brengen", 0)
+# db_handler.add_checklist(3,)
+
+# db_handler.add_checklist(3, "waar blijft die koffie?")
 # get_profile_picture van UserID, haal foto op
 # if db_handler.get_profile_picture(12):
 #     print("gelukt")
@@ -294,8 +421,8 @@ db_handler = DbHandler()
 # db_handler.check_username_password("newusername1", 10, "newpassword12345")
 
 # toevoegen nieuwe user 
-# profile_picture_path = "C:\\Users\\Remco H\\OneDrive\\Documenten\\educom\\aap.jpeg"
-# db_handler.add_user("newusername1", "newpassword12345", 1, profile_picture_path)
+#profile_picture_path = "C:\\Users\\Remco H\\OneDrive\\Documenten\\educom\\aap.jpeg"
+#db_handler.add_user("username", "password", 1, profile_picture_path)
 
 
 # toevoegen nieuw ticket
