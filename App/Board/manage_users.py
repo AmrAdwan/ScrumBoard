@@ -23,7 +23,7 @@ class ManageUsers:
             self.users.append(user)
 
     # Creates a new user object and user in the db with the given name and password. Returns false if creation failed
-    def register_user(self, username, password1, password2, picture = "", autologin = True):
+    def register_user(self, username, password1, password2, picture = "", autologin = False):
         if username == "" or password1 == "" or password1 != password2:
             return False
         if self.get_user(username=username) is not None:
@@ -45,17 +45,17 @@ class ManageUsers:
     # If the username exists and the password is correct, set the active user to the user with the given username
     def login(self, username, password):
         if username == "" or password == "":
-            return False
+            return False, None
         cur_user = self.get_user(username=username)
         if cur_user is None:
-            return False
+            return False, None
 
         # Check in the database if password is correct
         if self.dbHandler.check_username_password(username, cur_user.user_id, password):
             self.active_user = cur_user
-            return True
+            return True, cur_user.user_id
         else:
-            return False
+            return False, None
 
     # There is no longer an active user
     def logout(self):
@@ -96,10 +96,14 @@ class ManageUsers:
         return False
 
     # Changes the profile picture of the given user or the active one if none is given
-    def change_user_picture(self, img, user = None):
-        if user is None:
-            user = self.active_user
-        self.dbHandler.update_profile_picture(user.user_id, img, False)
+    # def change_user_picture(self, img, user = None):
+    #     if user is None:
+    #         user = self.active_user
+    #     self.dbHandler.update_profile_picture(user.user_id, img, False)
+
+    def change_user_picture(self, img_data, user_id):
+        self.dbHandler.update_profile_picture(user_id, img_data, as_path=False)
+
 
 
     # Updates the password of the given user or the active user if no user was given

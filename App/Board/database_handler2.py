@@ -304,11 +304,6 @@ class DbHandler:
             logging.error(f"Failed to update user rights in the database: {e}")
             self.mydb.rollback()
             return False
-        
-    # Make sure to close the connection and cursor when the object is destroyed
-    def __del__(self):
-        self.mycursor.close()
-        self.mydb.close()
 
     def add_checklist(self, ticketID, Title):
         try:
@@ -381,7 +376,10 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = f"Error updating checklist title: {err}"
 
-
+    # Make sure to close the connection and cursor when the object is destroyed
+    def __del__(self):
+        self.mycursor.close()
+        self.mydb.close()
 
 # Maak een instantie van de DbHandler
 db_handler = DbHandler()
