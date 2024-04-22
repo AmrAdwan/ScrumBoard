@@ -21,6 +21,10 @@ class User:
     def check_rights(self, rights):
         return rights.value <= self.rights.value
 
+    # Checks if the user has the given right
+    def check_rights_num(self, rights_num):
+        return rights_num <= self.rights.value
+
     # Gives rights to the given user if the current user is allowed to do that
     def give_rights(self, cur_user, rights):
         if self.rights == rights.ALL:

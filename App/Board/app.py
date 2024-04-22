@@ -27,7 +27,8 @@ def board():
     combined = zip(columns, colors)
     valid_users = manageUsers.getUsersByRights(rights.DRAG)
     column_tickets = manageTickets.get_tickets_by_column(columns)
-    return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets)
+    active_user = manageUsers.active_user
+    return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets, active_user=active_user)
 
 @app.route('/add_task', methods=["POST"])
 def add_task():
