@@ -5,6 +5,7 @@ import database_handler2 as db_handler
 from enums import status, rights
 import os
 import logging
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -90,8 +91,23 @@ def logout():
     manageUsers.logout()
     return redirect(url_for("home"))
 
+@app.route('/upload_img')
+def upload_img():
+    return render_template('upload_img.html')
+
+@app.route('/set_profile_picture', methods=["POST"])
+def set_profile_picture():
+    if request.method == 'POST':
+        img = request.files['img']
+        if img.filename == '':
+            return redirect(url_for("home"))
+        if manageUsers.active_user is None:
+            return redirect(url_for("home"))
+        manageUsers.change_user_picture(img)
+    return redirect(url_for("home"))
+
 def check_user_authentication():
-    if manageUsers.active_user != None:
+    if manageUsers.active_user is not None:
         return True
     return False  
 

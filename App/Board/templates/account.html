@@ -60,7 +60,23 @@
         <br>
       </form>
       <!-- End Change Password Form -->
+
+      <!-- update profile picture Form -->
+      <form id="imgForm" enctype=multipart/form-data action="{{ url_for('set_profile_picture') }}" method="POST" class="form-signin needs-validation">
+        <div class="form-group">
+          <label for="img">Select new profile picture</label>
+          <br>
+          <input type="file" id="img" name="img" accept="image/*">
+        </div>
+        <br>
+        <!-- Submit Button -->
+        <div class="form-group">
+          <button class="btn btn-lg btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Submit</button>
+        </div>
+      </form>
+      <!-- End update profile picture Form -->
     </div>
+    <br>
     <div class="col-sm-4"></div>
   </div>
 </div>

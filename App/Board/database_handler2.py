@@ -150,14 +150,14 @@ class DbHandler:
             self.error_message = f"Error removing user from ticket: {err}"
     
     
-    def update_user_rights(self, UserID, RightID):
-        try: 
-            sql = "UPDATE users SET RightID = %s WHERE userID = %s"
-            val = (RightID, UserID)
-            self.mycursor.execute(sql, val)
-            self.mydb.commit()
-        except mysql.connector.Error as err:
-            self.error_message = f"Error updating user rights: {err}"
+    # def update_user_rights(self, UserID, RightID):
+    #     try:
+    #         sql = "UPDATE users SET RightID = %s WHERE userID = %s"
+    #         val = (RightID, UserID)
+    #         self.mycursor.execute(sql, val)
+    #         self.mydb.commit()
+    #     except mysql.connector.Error as err:
+    #         self.error_message = f"Error updating user rights: {err}"
 
     def update_user_username(self, UserID, Username):
         try:
@@ -265,10 +265,13 @@ class DbHandler:
             return False
 
 
-    def update_profile_picture(self, UserID, profile_picture):
+    def update_profile_picture(self, UserID, profile_picture, as_path = True):
         try:
-            with open(profile_picture, 'rb') as file:
-                profile_picture_data = file.read()
+            if as_path:
+                with open(profile_picture, 'rb') as file:
+                    profile_picture_data = file.read()
+            else:
+                profile_picture_data = profile_picture.read()
         
             sql_profile_picture = "UPDATE users SET profile_picture = %s WHERE UserID = %s"
             val_profile_picture = (profile_picture_data, UserID)
@@ -304,7 +307,7 @@ class DbHandler:
         
     # Make sure to close the connection and cursor when the object is destroyed
     def __del__(self):
-        self.mycursorcursor.close()
+        self.mycursor.close()
         self.mydb.close()
 
     def add_checklist(self, ticketID, Title):

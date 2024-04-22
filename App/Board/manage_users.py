@@ -94,6 +94,12 @@ class ManageUsers:
             return True
         return False
 
+    # Changes the profile picture of the given user or the active one if none is given
+    def change_user_picture(self, img, user = None):
+        if user is None:
+            user = self.active_user
+        self.dbHandler.update_profile_picture(user.user_id, img, False)
+
 
     # Updates the password of the given user or the active user if no user was given
     # def change_user_password(self, password, user = None):
