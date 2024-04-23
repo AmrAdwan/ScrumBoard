@@ -323,6 +323,7 @@ class DbHandler:
             val = (ticketID, Title)
             self.mycursor.execute(sql,val)
             self.mydb.commit()
+            return self.mycursor.lastrowid
         except mysql.connector.Error as err:
             self.error_message = f"Error inserting checklist: {err}"
     
@@ -332,6 +333,7 @@ class DbHandler:
             val = (ChecklistID, Description, IsCompleted)
             self.mycursor.execute(sql,val)
             self.mydb.commit()
+            return self.mycursor.lastrowid
         except mysql.connector.Error as err:
             self.error_message = f"Error inserting checklistitems: {err}"
     

@@ -2,6 +2,8 @@ import math
 
 import database_handler2 as db_handler
 import ticket as ti
+import checklist as ch
+import checklist_item as ci
 from enums import rights
 from enums import status
 
@@ -132,4 +134,32 @@ class ManageTickets:
             column_tickets[column_names[stat]] = ticket_list
         return column_tickets
 
+    # Creates a new checklist within the given ticket
+    def create_checklist(self, title, ticket = None):
+        cur_ticket = ticket if ticket is not None else self.active_ticket
+        checklist_id = self.dbHandler.add_checklist(cur_ticket.ticket_id, title)
+        checklist = ch.Checklist(checklist_id, title, ticket)
+        cur_ticket.checklist = checklist
 
+    # Removes the checklist from the given ticket
+    def remove_checklist_from_ticket(self, ticket = None):
+        cur_ticket = ticket if ticket is not None else self.active_ticket
+        checklist_id = cur_ticket.checklist.checklist_id
+        cur_ticket.checklist = None
+        self.dbHandler.remove_checklist(checklist_id)
+
+    # Creates a new checklist item within the given checklist
+    def create_checklist_item(self, checklist, description, is_completed = False):
+        item_id = self.dbHandler.add_checklistitem(checklist.checklist_id, description, is_completed)
+        item = ci.ChecklistItem(item_id, checklist.checklist_id, description, checklist, is_completed)
+        checklist.add_item(item)
+
+    # Removes the checklist item from the given checklist
+    def remove_checklist_item(self, checklist_item):
+        checklist_item.checklist.remove_item(checklist_item)
+        self.dbHandler.remove_checklistitem(checklist_item.id)
+
+    # Sets the complete status of the checklist item
+    def checklist_item_completion(self, checklist_item, complete):
+        checklist_item.complete = complete
+        self.dbHandler.update_checklistitems_iscompleted(checklist_item.item_id, complete)
