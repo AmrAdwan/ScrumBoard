@@ -3,13 +3,14 @@
 class Ticket:
 
     # Initialize the ticket
-    def __init__(self, ticket_id, title, description, status, hours):
+    def __init__(self, ticket_id, title, description, status, hours, checklist = None):
         self.ticket_id = ticket_id
         self.title = title
         self.description = description
         self.status = status
         self.hours = hours
         self.users = []
+        self.checklist = checklist
 
     # Assigns a user to this ticket
     def assign_user(self, user):
