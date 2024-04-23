@@ -5,75 +5,51 @@
   <header class="text-center mb-4">
     <h1>Scrum Board</h1>
   </header>
-  <!-- <div class="row g-4"> -->
+
   <div class="row g-4 justify-content-center">
-    <!-- Each column with action buttons -->
     {% for column, color in combined %}
-    <div class="col-md-2">
-      <div class="bg-light p-2 shadow-sm rounded">
-        <h4 class="bg-{{ color }} text-white p-2 rounded">{{ column }}</h4>
-        <!-- Add Task Button -->
-        {% if column == "Backlog" %}
-          {% if active_user is not none and active_user.check_rights_num(5) %}
-            <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
-              data-bs-target="#addTaskModal" title="Add New Item">
-              Add Task
-            </button>
-          {% else %}
-            <div title="You do not have the rights to add a new task">
-              <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
-              data-bs-target="#addTaskModal" disabled>
-                Add Task
-              </button>
-            </div>
+    <div id="{{ column }}" data-status="{{ column|upper }}" class="col-md-2 dropzone" ondragover="allowDrop(event)"
+      ondrop="drop(event)">
+      <h4 class="bg-{{ color }} text-white p-2 rounded">{{ column }}</h4>
+
+      {% if column == "Backlog" %}
+      {% if active_user is not none and active_user.check_rights_num(5) %}
+      <button type="button" class="btn btn-sm btn-outline-primary w-100 mb-2" data-bs-toggle="modal"
+        data-bs-target="#addTaskModal">Add Task</button>
+      {% endif %}
+      {% endif %}
+
+      {% for ticket in column_tickets[column] %}
+      <div id="ticket{{ ticket.ticket_id }}" class="card my-2 draggable" draggable="true"
+        ondragstart="dragStart(event)">
+        <div class="card-body">
+          <h6 class="card-title">{{ ticket.title }}</h6>
+          <p class="card-text">{{ ticket.description }}</p>
+          {% for user in ticket.users %}
+          <p class="card-text"><small class="text-muted">{{ user.username }}</small></p>
+          {% endfor %}
+          <p class="card-text">Hours: {{ ticket.hours }}</p>
+
+          {% if active_user is not none and active_user.check_rights_num(4) %}
+          <button type="button" class="btn btn-sm btn-primary">Edit</button>
+          <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
+            <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
           {% endif %}
-        {% endif %}
-        {% for ticket in column_tickets[column] %}
-        <div class="card my-2">
-          <div class="card-body">
-            <h6 class="card-title">{{ticket.title}}</h6>
-            <p class="card-text">{{ticket.description}}</p>
-            {% for user in ticket.users %}
-              <p class="card-text"><small class="text-muted">{{user.username}}</small></p>
-            {% endfor %}
-            <p class="card-text">Hours: {{ticket.hours}}</p>
-            <!-- Task Action Buttons -->
-            {% if active_user is not none and active_user.check_rights_num(4) %}
-              <button type="button" class="btn btn-sm btn-primary" title="Edit task">Edit</button>
-            {% else %}
-              <div title="You do not have the rights to edit a task">
-                <button type="button" class="btn btn-sm btn-primary" disabled>Edit</button>
-              </div>
-            {% endif %}
-
-            <form action = "{{ url_for('del_task') }}" method = "POST">
-              <input type="hidden" name="ticket_id" value="{{ticket.ticket_id}}" required>
-              {% if active_user is not none and active_user.check_rights_num(4) %}
-                <button type="submit" class="btn btn-sm btn-danger" title="Edit task">Delete</button>
-              {% else %}
-              <div title="You do not have the rights to delete a task">
-                <button type="submit" class="btn btn-sm btn-danger" disabled>Delete</button>
-              </div>
-              {% endif %}
-            </form>
-
-          </div>
         </div>
-        {% endfor %}
-        <!-- Additional cards for each status -->
       </div>
+      {% endfor %}
     </div>
     {% endfor %}
   </div>
 </div>
 
-<!-- Modal for Adding Tasks -->
-<div class="modal fade" id="addTaskModal" tabindex="-1"
-  aria-labelledby="addTaskModalLabel" aria-hidden="true">
+<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addTaskModalLabel">Create task</h5>
+        <h5 class="modal-title" id="addTaskModalLabel">Create Task</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -95,7 +71,7 @@
             <select class="form-control" id="task-assignee" name="assignee">
               <option value="-1" selected></option>
               {% for user in valid_users %}
-                <option value="{{user.user_id}}">{{user.username}}</option>
+              <option value="{{user.user_id}}">{{user.username}}</option>
               {% endfor %}
             </select>
           </div>
@@ -107,4 +83,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='javascript/drag_drop.js') }}"></script>
 {% endblock %}

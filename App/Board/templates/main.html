@@ -54,7 +54,7 @@
         <li class="nav-item d-flex align-items-center">
           <a class="nav-link d-flex align-items-center" href="{{ url_for('account') }}">
             {% if session.get('user_profile_pic') %}
-            <!-- Assuming user_profile_pic is base64 encoded -->
+            <!-- user_profile_pic is base64 encoded -->
             <img src="data:image/*;base64,{{ session.get('user_profile_pic') }}" class="rounded-circle me-2"
               alt="Profile" style="height: 40px; width: 40px;">
             {% else %}
@@ -96,6 +96,8 @@
   </div>
 
   {% block extra_content %}{% endblock %}
+  {% block extra_js %}{% endblock %}
+
 
   <footer>
     ScrumBoard | Software Engineering @ Educom

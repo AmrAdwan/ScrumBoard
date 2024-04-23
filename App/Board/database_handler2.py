@@ -81,14 +81,26 @@ class DbHandler:
         except mysql.connector.Error as err:
             self.error_message = "Error adding user to ticket: {}".format(err) 
 
+    # def update_ticket_status(self, TicketID, StatusID):
+    #     try:
+    #         sql = "UPDATE tickets SET statusID = %s WHERE ticketID = %s" 
+    #         val = (StatusID, TicketID)
+    #         self.mycursor.execute(sql, val)
+    #         self.mydb.commit()
+    #     except mysql.connector.Error as err:
+    #         self.error_message = f"Error updating ticket status: {err}"
     def update_ticket_status(self, TicketID, StatusID):
         try:
-            sql = "UPDATE tickets SET statusID = %s WHERE ticketID = %s" 
+            sql = "UPDATE tickets SET statusID = %s WHERE ticketID = %s"
             val = (StatusID, TicketID)
             self.mycursor.execute(sql, val)
             self.mydb.commit()
+            return True  # Indicate success
         except mysql.connector.Error as err:
             self.error_message = f"Error updating ticket status: {err}"
+            print(self.error_message)
+            return False  # Indicate failure
+
     
     def update_ticket_title(self, TicketID, Title):
         try:
@@ -382,10 +394,10 @@ class DbHandler:
         self.mydb.close()
 
 # Maak een instantie van de DbHandler
-db_handler = DbHandler()
+# db_handler = DbHandler()
 
 
-db_handler.remove_ticket(3)
+# db_handler.remove_ticket(3)
 #checklist_items = db_handler.read_checklistitems()
 #print(checklist_items)
 

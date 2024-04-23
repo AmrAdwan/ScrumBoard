@@ -1,5 +1,5 @@
 import base64
-from flask import Flask, flash, redirect, render_template, g, request, session, url_for
+from flask import Flask, flash, jsonify, redirect, render_template, g, request, session, url_for
 import manage_users as ma_us
 import manage_tickets as ma_ti
 import database_handler2 as db_handler
@@ -210,6 +210,31 @@ def delete_user(user_id):
         # Handle failure case
         return "Error deleting user", 400
     
+@app.route('/update_ticket_status', methods=['POST'])
+def update_ticket_status():
+    # The request JSON contains 'ticket_id' and 'new_status'
+    data = request.json
+    ticket_id = data.get('ticket_id')
+    new_status = data.get('new_status')
+    # print("new_status:    " + new_status)
+
+    # Fetch the ticket object using the ticket_id
+    ticket = manageTickets.get_ticket(ticket_id=ticket_id)
+    if not ticket:
+        return jsonify({'error': 'Ticket not found'}), 404
+
+    try:
+        # Convert the new status to the enum type
+        new_status_enum = status[new_status.upper()]
+    except KeyError:
+        return jsonify({'error': 'Invalid status'}), 400
+
+    # Call the change_ticket_status method
+    if manageTickets.change_ticket_status(ticket=ticket, status=new_status_enum):
+        return jsonify({'success': 'Ticket status updated'}), 200
+    else:
+        return jsonify({'error': 'Failed to update ticket status'}), 500
+    
 
 @app.route('/create_user', methods=['GET', 'POST'])
 def create_user():
@@ -230,7 +255,6 @@ def create_user():
             return redirect(url_for('create_user'))
     
     return render_template('create_user.html')
-
 
 
 if __name__ == "__main__":
