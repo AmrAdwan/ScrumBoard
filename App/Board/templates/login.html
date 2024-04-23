@@ -12,7 +12,7 @@
         <h5 id="loginOutputResult" style="color:red"></h5>
         <h2 class="h3 mb-3 font-weight-normal">Please sign in</h2>
         <!-- UserName -->
-        <input name="userName" type="text" id="username" class="form-control" placeholder="User Name" required>
+        <input name="userName" type="text" id="username" class="form-control" placeholder="User Name" required value="{{ request.form['userName']}}">
         <div class="invalid-feedback">User Name is required.</div>
         <br />
         <!-- Password -->
@@ -20,7 +20,7 @@
         <div class="invalid-feedback">Password is required.</div>
         <br>
         <!-- Submit Button -->
-        <button class="btn btn-lg btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button class="btn btn-lg btn-success btn-block" type="submit"><i class="bi bi-person"></i> Login</button>
       </form>
       <!-- End Login Form -->
     </div>

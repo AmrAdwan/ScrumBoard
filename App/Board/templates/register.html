@@ -16,7 +16,7 @@
 
         <!-- UserName -->
         <div class="form-group">
-          <input id="registerUsername" name="userName" type="text" class="form-control" placeholder="Username" required>
+          <input id="registerUsername" name="userName" type="text" class="form-control" placeholder="Username" required value="{{ request.form['userName'] }}">
           <div class="invalid-feedback">Username is required</div>
         </div>
         <br>
@@ -39,8 +39,8 @@
 
         <!-- Signup Button -->
         <div class="form-group">
-          <button class="btn btn-md btn-warning" type="submit">Sign Up</button>
-          <button class="btn btn-md btn-dark" type="reset"> Reset</button>
+          <button class="btn btn-md btn-warning" type="submit"><i class="bi bi-box-arrow-in-right"></i> Sign Up</button>
+          <button class="btn btn-md btn-dark" type="reset"><i class="bi bi-arrow-repeat"></i> Reset</button>
         </div>
       </form>
       <!-- End Sign Up Form -->

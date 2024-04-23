@@ -99,8 +99,12 @@ def inject_user():
 def login():
     if request.method == "POST":
         result = request.form
+
         if not result['userName']:
             flash('User Name is required!', 'error')
+        elif not result['password']:
+            flash('Password is required!', 'error')
+
         valid_info, user_id = manageUsers.login(result["userName"], result["password"])
         if valid_info:
             session['user_authenticated'] = True
@@ -124,7 +128,8 @@ def login():
             
             return redirect(url_for("board"))
         else:
-            flash('Login failed, please check your username and password.', 'error')
+            if result['userName'] and result['password']:
+                flash('Login failed, please check your username and password.', 'error')
     return render_template('login.html')
 
 
@@ -134,6 +139,15 @@ def login():
 def register():
     if request.method == "POST":
         result = request.form
+
+        if not result['userName']:
+            flash('User Name is required!', 'error')
+
+        elif not result['password1']:
+            flash('Password is required!', 'error')
+        elif not result['password2']:
+            flash('Password Confirmation is required!', 'error')
+
         valid_info = manageUsers.register_user(result["userName"], result["password1"], result["password2"])
         if valid_info:
             return redirect(url_for("login"))
@@ -231,9 +245,15 @@ def reset_user_password(user_id):
         return "User not found", 404
 
     if request.method == "POST":
-        if 'password' not in request.form:
-            return "Password field is missing.", 400
+        # if 'password' not in request.form:
+        #     return "Password field is missing.", 400
+        
         new_password = request.form['password']
+        print("new_password", new_password)
+        
+        if not new_password:
+            flash('Paassword is required!', 'error')
+
         if manageUsers.change_user_password(new_password, user):
             return redirect(url_for('manage_users'))
         else:
