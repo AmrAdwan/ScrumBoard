@@ -92,7 +92,7 @@ class DbHandler:
     def update_ticket_status(self, TicketID, StatusID):
         try:
             sql = "UPDATE tickets SET statusID = %s WHERE ticketID = %s"
-            val = (StatusID, TicketID)
+            val = (StatusID.value, TicketID)
             self.mycursor.execute(sql, val)
             self.mydb.commit()
             return True  # Indicate success

@@ -25,8 +25,9 @@ function drop(event) {
     fetch('/update_ticket_status', {
       method: 'POST',
       body: JSON.stringify({
-        ticket_id: ticketId,
-        new_status: dropzone.getAttribute('data-status')
+        // ticket_id: ticketId,
+        ticket_id: parseInt(ticketId.replace('ticket', '')),
+        new_status: newStatus
       }),
       headers: {
         'Content-Type': 'application/json',

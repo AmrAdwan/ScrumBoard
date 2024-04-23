@@ -214,6 +214,7 @@ def delete_user(user_id):
 def update_ticket_status():
     # The request JSON contains 'ticket_id' and 'new_status'
     data = request.json
+    print("dataaaa: " , data)
     ticket_id = data.get('ticket_id')
     new_status = data.get('new_status')
     # print("new_status:    " + new_status)
