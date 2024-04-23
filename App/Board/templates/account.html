@@ -8,7 +8,8 @@
   <div class="row">
     <div class="col-sm-4"></div>
     <div class="col-sm-4" style="text-align: center;">
-      <img src="{{ url_for('static', filename='images/change_password.png') }}" class="mx-auto d-block img-thumbnail border-0">
+      <img src="{{ url_for('static', filename='images/change_password.png') }}"
+        class="mx-auto d-block img-thumbnail border-0">
 
       <!-- Change Password Form -->
       <form id="manageAccountForm" method="POST" class="needs-validation" novalidate
@@ -20,11 +21,11 @@
 
         <!-- UserName -->
         <fieldset disabled>
-        <div class="form-group">
-          <!-- <label for="disabledTextInput" class="form-label">User Name</label> -->
-          <input id="Username" name="userName" type="text" class="form-control" placeholder={{session['username']}}>
-        </div>
-      </fieldset>
+          <div class="form-group">
+            <!-- <label for="disabledTextInput" class="form-label">User Name</label> -->
+            <input id="Username" name="userName" type="text" class="form-control" placeholder={{session['username']}}>
+          </div>
+        </fieldset>
         <br>
 
         <!-- Old Password -->
@@ -37,23 +38,23 @@
 
         <!-- New Password -->
         <div class="form-group">
-          <input id="ChangePassword" name="ChangePassword" type="password" class="form-control" placeholder="New Password"
-            required>
+          <input id="ChangePassword" name="ChangePassword" type="password" class="form-control"
+            placeholder="New Password" required>
           <div class="invalid-feedback">Please confirm your password</div>
         </div>
         <br>
 
         <!-- Confirm New Password -->
         <div class="form-group">
-          <input id="confChangePassword" name="confChangePassword" type="password" class="form-control" placeholder="Confirm New Password"
-            required>
+          <input id="confChangePassword" name="confChangePassword" type="password" class="form-control"
+            placeholder="Confirm New Password" required>
           <div class="invalid-feedback">Please confirm your password</div>
         </div>
         <br>
 
         <!-- Change Password Button -->
         <div class="form-group">
-          <button class="btn btn-md btn-warning" type="submit"><i class="fas fa-plus"></i> Change Password</button>
+          <button class="btn btn-md btn-warning" type="submit">Change Password</button>
           <button class="btn btn-md btn-dark" type="reset"><i class="fas fa-redo"></i> Reset</button>
         </div>
         <br>
@@ -62,19 +63,19 @@
       <!-- End Change Password Form -->
 
       <!-- update profile picture Form -->
-      <form id="imgForm" enctype=multipart/form-data action="{{ url_for('set_profile_picture') }}" method="POST" class="form-signin needs-validation">
-        <div class="form-group">
-          <label for="img">Select new profile picture</label>
-          <br>
-          <input type="file" id="img" name="img" accept="image/*">
+      <form id="imgForm" enctype="multipart/form-data" action="{{ url_for('set_profile_picture') }}" method="POST"
+        class="needs-validation" novalidate>
+        <div class="mb-3">
+          <label for="img" class="form-label">Select new profile picture</label>
+          <input type="file" class="form-control" id="img" name="img" accept="image/*" required>
+          <div class="invalid-feedback">
+            Please select a profile picture.
+          </div>
         </div>
-        <br>
         <!-- Submit Button -->
-        <div class="form-group">
-          <button class="btn btn-lg btn-success btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Submit</button>
-          <br>
-          <br>
-        </div>
+        <button class="btn btn-success" type="submit"><i class="fas fa-sign-in-alt"></i> Submit</button>
+        <br>
+        <br>
       </form>
       <!-- End update profile picture Form -->
     </div>

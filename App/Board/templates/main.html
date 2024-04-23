@@ -53,15 +53,22 @@
         <!-- Account Link with Image -->
         <li class="nav-item d-flex align-items-center">
           <a class="nav-link d-flex align-items-center" href="{{ url_for('account') }}">
-            {% if session.get('user_profile_pic') %}
+            <!-- {% if session.get('user_profile_pic') %} -->
             <!-- user_profile_pic is base64 encoded -->
-            <img src="data:image/*;base64,{{ session.get('user_profile_pic') }}" class="rounded-circle me-2"
-              alt="Profile" style="height: 40px; width: 40px;">
-            {% else %}
+            <!-- <img src="data:image/*;base64,{{ session.get('user_profile_pic') }}" class="rounded-circle me-2"
+            alt="Profile" style="height: 40px; width: 40px;"> -->
+            <!-- <span>Image path: {{ url_for('static', filename='images/user.' ~ user.user_id|string ~ '.png') }}</span> -->
+
+            <!-- <img src="/static/images/user_13.png" class="rounded-circle me-2" alt="Profile" style="height: 40px; width: 40px;"> -->
+
+
+            <img src="{{ url_for('static', filename='images/user_' ~ user.user_id|string ~ '.png') }}" class="rounded-circle me-2" alt="Profile" style="height: 40px; width: 40px;">
+
+            <!-- {% else %} -->
             <!-- Default image if no profile pic -->
-            <img src="{{ url_for('static', filename='images/coolCat.jpg') }}" class="rounded-circle me-2"
+            <!-- <img src="{{ url_for('static', filename='images/coolCat.jpg') }}" class="rounded-circle me-2"
               alt="Default Profile" style="height: 40px; width: 40px;">
-            {% endif %}
+            {% endif %} -->
             <span>Account</span>
           </a>
         </li>

@@ -8,7 +8,8 @@
 
   <div class="row g-4 justify-content-center">
     {% for column, color in combined %}
-    <div id="{{ column }}" data-status="{{ 'PROGRESS' if column == 'In Progress' else column|upper }}" class="col-md-2 dropzone" ondragover="allowDrop(event)" ondrop="drop(event)">
+    <div id="{{ column }}" data-status="{{ 'PROGRESS' if column == 'In Progress' else column|upper }}"
+      class="col-md-2 dropzone" ondragover="allowDrop(event)" ondrop="drop(event)">
       <h4 class="bg-{{ color }} text-white p-2 rounded">{{ column }}</h4>
 
       {% if column == "Backlog" %}
@@ -34,6 +35,16 @@
           <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
             <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            {% else %}
+            <!-- <div class="col-sm-12 text-center"> -->
+            <!-- <div title="You do not have the rights to edit a task">
+                <button type="button" class="btn btn-primary btn-md center-block" Style="width: 100px;" disabled>Edit</button>
+              </div> -->
+            <div title="You do not have the rights to delete a task" class="col-sm-12 text-center">
+              <button type="submit" class="btn btn-danger btn-md center-block" Style="width: 100px;"
+                disabled>Delete</button>
+            </div>
+            <!-- </div> -->
           </form>
           {% endif %}
         </div>

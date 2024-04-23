@@ -72,21 +72,60 @@ def manage_users():
     users =  manageUsers.users
     return render_template('manage_users.html', users=users)
 
+@app.context_processor
+def inject_user():
+    if 'user_id' in session:
+        user = manageUsers.get_user(user_id=session['user_id'])
+        return {'user': user}
+    return {}
+
+
+# @app.route('/login', methods=["POST", "GET"])
+# def login():
+#     if request.method == "POST":
+#         result = request.form
+#         # print(result)
+#         valid_info, user_id = manageUsers.login(result["userName"], result["password"])
+#         if valid_info:
+#             session['user_authenticated'] = True
+#             session['user_id'] = user_id
+#             session['user_rights'] = manageUsers.get_active_user_rights()
+#             session["username"] = result["userName"]
+
+#             return redirect(url_for("board"))
+#     return render_template('login.html')
 
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == "POST":
         result = request.form
-        # print(result)
         valid_info, user_id = manageUsers.login(result["userName"], result["password"])
         if valid_info:
             session['user_authenticated'] = True
             session['user_id'] = user_id
-            # Assigning user rights after successful login
             session['user_rights'] = manageUsers.get_active_user_rights()
             session["username"] = result["userName"]
+            
+            img_data = dbHandler.get_profile_picture(user_id)
+            # print("imgggggg::: ", img_data)
+            if img_data:
+                img_filename = f'user_{user_id}.png'
+                img_path = os.path.join(app.config['UPLOAD_FOLDER'], img_filename)
+                try:
+                    with open(img_path, 'wb') as img_file:
+                        img_file.write(img_data)
+                    session['user_profile_pic'] = img_filename
+                    # print("image:::: " , img_filename)
+                except Exception as e:
+                    print(f"Failed to write image file: {e}")
+                    flash('Failed to save profile picture.', 'error')
+            
             return redirect(url_for("board"))
+        else:
+            flash('Login failed, please check your username and password.', 'error')
     return render_template('login.html')
+
+
 
 
 @app.route('/register', methods=["POST", "GET"])
