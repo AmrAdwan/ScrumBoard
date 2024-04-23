@@ -99,6 +99,8 @@ def inject_user():
 def login():
     if request.method == "POST":
         result = request.form
+        if not result['userName']:
+            flash('User Name is required!', 'error')
         valid_info, user_id = manageUsers.login(result["userName"], result["password"])
         if valid_info:
             session['user_authenticated'] = True

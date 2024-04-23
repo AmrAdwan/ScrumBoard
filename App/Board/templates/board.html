@@ -35,7 +35,9 @@
           <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
             <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
             {% else %}
+            <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
             <!-- <div class="col-sm-12 text-center"> -->
             <!-- <div title="You do not have the rights to edit a task">
                 <button type="button" class="btn btn-primary btn-md center-block" Style="width: 100px;" disabled>Edit</button>
