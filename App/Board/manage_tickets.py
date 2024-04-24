@@ -28,6 +28,7 @@ class ManageTickets:
         # adds users to tickets
         for utData in userTicketData:
             self.get_ticket(utData[1]).users.append(self.manageUser.get_user(utData[0]))
+            self.manageUser.get_user(utData[0]).tickets.append(self.get_ticket(utData[1]))
 
     # Gets a ticket by id or by title or returns None if it cannot be found
     def get_ticket(self, ticket_id=-1, title=""):
@@ -63,6 +64,7 @@ class ManageTickets:
         #     return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         cur_ticket.edit_ticket(users=None, title =title, description=description, status=status, hours=hours)
+
         # update the ticket in the database
         if title is not None:
             self.dbHandler.update_ticket_title(cur_ticket.ticket_id, title)
@@ -116,6 +118,7 @@ class ManageTickets:
             return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         cur_user = user if user is not None else self.manageUser.active_user
+
         cur_user.remove_ticket(cur_ticket)
         cur_ticket.remove_user(cur_user)
         self.dbHandler.remove_user_from_ticket(cur_user.user_id, cur_ticket.ticket_id)

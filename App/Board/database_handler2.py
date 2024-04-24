@@ -105,7 +105,7 @@ class DbHandler:
     def update_ticket_title(self, TicketID, Title):
         try:
             sql = "UPDATE tickets SET title = %s WHERE ticketID = %s"
-            val = (TicketID, Title)
+            val = (Title, TicketID)
             self.mycursor.execute(sql,val)
             self.mydb.commit()
         except mysql.connector.Error as err:
@@ -115,7 +115,7 @@ class DbHandler:
     def update_ticket_description(self, TicketID, Description):
         try:
             sql = "UPDATE tickets SET description = %s WHERE TicketID = %s"
-            val = (TicketID, Description)
+            val = (Description, TicketID)
             self.mycursor.execute(sql, val)
             self.mydb.commit()
         except mysql.connector.Error as err:
