@@ -27,7 +27,7 @@ def inject_db_handler():
 
 @app.before_request
 def before_request():
-    g.user_authenticated = check_user_authentication()
+    g.user_authenticated = 'user_id' in session and session.get('user_authenticated', False)
     
 @app.route('/')
 def home():
@@ -108,7 +108,7 @@ def del_user_ticket():
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": True}
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.users)
 
-@app.route('/account')
+@app.route('/account', methods=['GET', 'POST'])
 def account():
     user_id = session.get('user_id')
     if not user_id:
@@ -270,14 +270,7 @@ def upload_img():
 #         if manageUsers.active_user is None:
 #             return redirect(url_for("home"))
 #         manageUsers.change_user_picture(img)
-#     return redirect(url_for("home"))
-
-def check_user_authentication():
-    if manageUsers.active_user is not None:
-        return True
-    return False  
-
-
+#     return redirect(url_for("home"))  
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -366,6 +359,25 @@ def delete_user(user_id):
     else:
         # Handle failure case
         return "Error deleting user", 400
+
+
+@app.route('/delete_account', methods=["POST"])
+def delete_account():
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('No user authenticated', 'error')
+        return redirect(url_for('login'))
+
+    if manageUsers.remove_user(user_id):
+        session.pop('user_id', None)
+        session.pop('user_authenticated', None)
+        session.clear()
+        flash('Your account has been successfully deleted.', 'success')
+        return redirect(url_for('home'))
+    else:
+        flash('Failed to delete account.', 'error')
+        return redirect(url_for('account'))
+
     
 @app.route('/update_ticket_status', methods=['POST'])
 def update_ticket_status():
