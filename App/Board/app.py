@@ -59,9 +59,56 @@ def del_task():
         remove_success = manageTickets.remove_ticket(manageTickets.get_ticket(int(result["ticket_id"])))
     return board()
 
-@app.route('/account')
+@app.route('/account', methods=["POST", "GET"])
 def account():
+    user_id = session.get('user_id')
+    if not user_id:
+        flash('User not found', 'error')
+        return redirect(url_for('login'))
+
+    user = manageUsers.get_user(user_id=user_id)
+    if not user:
+        return "User not found", 404
+
+    if request.method == "POST":
+        result = request.form
+        oldPassword = result.get('oldPassword')
+        newPassword = result.get('ChangePassword')
+        confNewPassword = result.get('confChangePassword')
+
+        if not oldPassword:
+            flash('Old password required!', 'error')
+            return render_template('account.html')
+
+        elif not newPassword:
+            flash('New password required!', 'error')
+            return render_template('account.html')
+        
+        elif not confNewPassword:
+            flash('Confirm new password required!', 'error')
+            return render_template('account.html')
+        
+        elif newPassword != confNewPassword:
+            flash('New password and its confirmation should be the same', 'error')
+            return render_template('account.html')
+
+        # Verify the old password is correct
+        if not dbHandler.check_username_password(user.username, user.user_id, oldPassword):
+            flash('Old password is incorrect', 'error')
+            return render_template('account.html')
+
+        # If old password is correct, update to the new password
+        valid_info = manageUsers.change_user_password(newPassword, user)
+        if valid_info:
+            flash('Password updated successfully!', 'success')
+            return redirect(url_for("home"))
+        else:
+            flash('Failed to update password.', 'error')
+
     return render_template('account.html')
+
+
+
 
 @app.route('/manage_users')
 def manage_users():
