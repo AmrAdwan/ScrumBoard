@@ -24,7 +24,7 @@
         class="d-inline">
         <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
       </form>
-      <div id="ticket{{ ticket.ticket_id }}" class="card my-2 draggable" draggable="true"
+      <div id="ticket{{ ticket.ticket_id }}" class="card my-2 draggable" draggable="{{ 'true' if session['user_rights'] > 1 else 'false' }}"
         ondragstart="dragStart(event)">
         {% if active_user is not none and active_user.check_rights_num(4) %}
         <div class="card-body" onClick="document.forms['edit_form{{ ticket.ticket_id}}'].submit();">
