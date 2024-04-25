@@ -52,20 +52,19 @@ def add_task():
         create_success = manageTickets.create_ticket(result["title"], result["description"], status.BACKLOG, result["hours"])
         if create_success and int(result["assignee"]) != -1:
             user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(int(result["assignee"])), manageTickets.get_ticket(title=result["title"]))
-    return board()
+    return redirect(url_for('board'))
 
 @app.route('/del_task', methods=["POST"])
 def del_task():
     if request.method == "POST":
         result = request.form
         remove_success = manageTickets.remove_ticket(manageTickets.get_ticket(int(result["ticket_id"])))
-    return board()
+    return redirect(url_for('board'))
 
 @app.route('/edit_task', methods=["POST"])
 def edit_task():
     if request.method == "POST":
         result = request.form
-        print(result["ticket_id"])
         ticket = manageTickets.get_ticket(int(result["ticket_id"]))
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": False}
         if "edit_field" in result:
@@ -73,7 +72,7 @@ def edit_task():
         elif "edit_field" in result:
             ava_edit[result["edit_field"]] = True
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
-    return board()
+    return redirect(url_for('board'))
 
 @app.route('/update_task', methods=["POST"])
 def update_task():
