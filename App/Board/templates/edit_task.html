@@ -90,6 +90,7 @@
               </form>
               <br>
             {% endfor %}
+            {% if users|length > 0 %}
               <form action="{{ url_for('add_user_ticket') }}" method="POST" class="d-inline">
                 <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
                 <select class="form-control" name="user_id">
@@ -99,6 +100,7 @@
                 </select>
                 <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
               </form>
+            {% endif %}
           {% else %}
             {% for user in ticket.users %}
               <p>{{ user.username }}</p>

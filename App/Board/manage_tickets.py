@@ -104,6 +104,8 @@ class ManageTickets:
             return False
         cur_ticket = ticket if ticket is not None else self.active_ticket
         cur_user = user if user is not None else self.manageUser.active_user
+        if not (cur_user in self.manageUser.get_free_users(cur_ticket)):
+            return False
         cur_user.assign_ticket(cur_ticket)
         cur_ticket.assign_user(cur_user)
         self.dbHandler.add_user_to_ticket(cur_user.user_id, cur_ticket.ticket_id)

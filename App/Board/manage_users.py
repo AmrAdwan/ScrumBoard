@@ -148,3 +148,10 @@ class ManageUsers:
                 return False
         logging.warning(f"User not found with ID: {user_id}")
         return False
+
+    def get_free_users(self, ticket):
+        result = []
+        for user in self.users:
+            if user not in ticket.users:
+                result.append(user)
+        return result

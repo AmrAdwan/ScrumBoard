@@ -72,7 +72,7 @@ def edit_task():
             ava_edit[result["edit_field"]] = True
         elif "edit_field" in result:
             ava_edit[result["edit_field"]] = True
-        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.users)
+        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
     return board()
 
 @app.route('/update_task', methods=["POST"])
@@ -86,7 +86,7 @@ def update_task():
                                   status[result["status"]] if "status" in result else None,
                                   result["hours"] if "hours" in result else None)
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": False}
-        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.users)
+        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
 
 @app.route('/add_user_ticket', methods=["POST"])
 def add_user_ticket():
@@ -96,7 +96,7 @@ def add_user_ticket():
         ticket = manageTickets.get_ticket(int(result["ticket_id"]))
         manageTickets.add_user_to_ticket(user, ticket)
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": True}
-        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.users)
+        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
 
 @app.route('/del_user_ticket', methods=["POST"])
 def del_user_ticket():
@@ -106,7 +106,7 @@ def del_user_ticket():
         ticket = manageTickets.get_ticket(int(result["ticket_id"]))
         manageTickets.remove_user_from_ticket(user, ticket)
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": True}
-        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.users)
+        return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
 
 @app.route('/account', methods=['GET', 'POST'])
 def account():
