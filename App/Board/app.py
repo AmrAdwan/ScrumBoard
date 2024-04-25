@@ -398,9 +398,13 @@ def reset_user_password(user_id):
 
 @app.route('/user/<int:user_id>/delete', methods=['POST'])
 def delete_user(user_id):
+    active_id = manageUsers.active_user.user_id
     if manageUsers.remove_user(user_id):
         # When successful deletion
-        return redirect(url_for('manage_users'))
+        if active_id == user_id:
+            return redirect(url_for('logout'))
+        else:
+            return redirect(url_for('manage_users'))
     else:
         # Handle failure case
         return "Error deleting user", 400
