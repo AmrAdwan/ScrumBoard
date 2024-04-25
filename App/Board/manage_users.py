@@ -137,6 +137,8 @@ class ManageUsers:
         return None  # Or an appropriate value indicating no active user/rights
 
     def change_user_rights(self, user_id, new_rights):
+        if self.active_user is None or self.active_user.check_rights(rights.ALL):
+            return False
         user = self.get_user(user_id=user_id)
         if self.check_only_admin(user):
             logging.warning(f"Cannot remove only admin")

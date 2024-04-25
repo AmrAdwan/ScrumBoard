@@ -56,7 +56,10 @@ def board():
     column_tickets = manageTickets.get_tickets_by_column(columns)
     active_user = manageUsers.active_user
     active_ticket = manageTickets.get_ticket(1)#manageTickets.active_ticket
-    return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets,
+    if active_user is None:
+        return redirect(url_for('home'))
+    else:
+        return render_template('board.html', combined=list(combined), valid_users=valid_users, column_tickets=column_tickets,
                            active_user=active_user, tickets=manageTickets.tickets)
 
 @app.route('/add_task', methods=["POST"])
