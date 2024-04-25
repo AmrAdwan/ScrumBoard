@@ -80,11 +80,15 @@
       <!-- End update profile picture Form -->
       
       <!-- Delete Account Button -->
-      <form action="{{ url_for('delete_account') }}" method="POST"
-        onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
-        <button type="submit" class="btn btn-danger"><i class="bi bi-trash-fill"></i> Delete Account</button>
-      </form>
-      <br>
+      {% if not (only_admin != none and user == only_admin) %}
+        <form action="{{ url_for('delete_account') }}" method="POST"
+          onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+          <button type="submit" class="btn btn-danger"><i class="bi bi-trash-fill"></i> Delete Account</button>
+        </form>
+        <br>
+      {% else %}
+        <button type="submit" class="btn btn-danger" title="You are the only admin" disabled><i class="bi bi-trash-fill"></i> Delete Account</button>
+      {% endif %}
     </div>
     <br>
     <div class="col-sm-4"></div>

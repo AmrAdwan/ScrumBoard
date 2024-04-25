@@ -153,8 +153,12 @@ def account():
             return redirect(url_for("home"))
         else:
             flash('Failed to update password.', 'error')
+    only_admin = None
+    for user in manageUsers.users:
+        if manageUsers.check_only_admin(user):
+            only_admin = user
 
-    return render_template('account.html')
+    return render_template('account.html', only_admin=only_admin)
 
 
 
@@ -165,8 +169,12 @@ def manage_users():
         return redirect(url_for('board'))
 
     # Retrieve and pass user data to the template
-    users =  manageUsers.users
-    return render_template('manage_users.html', users=users)
+    users = manageUsers.users
+    only_admin = None
+    for user in users:
+        if manageUsers.check_only_admin(user):
+            only_admin = user
+    return render_template('manage_users.html', users=users, only_admin=only_admin)
 
 @app.context_processor
 def inject_user():

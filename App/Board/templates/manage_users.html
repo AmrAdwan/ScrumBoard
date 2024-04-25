@@ -13,19 +13,23 @@
       <span>{{ user.username }}</span>
       <!-- Form for user management -->
       <div>
+        {% if not (only_admin != none and user == only_admin) %}
         <form action="{{ url_for('change_user_rights', user_id=user.user_id) }}" method="post">
           <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square" style="font-size:16px"></i> Change Rights</button>
         </form>
         <br>
+        {% endif %}
         <form action="{{ url_for('reset_user_password', user_id=user.user_id) }}" method="GET">
           <button type="submit" class="btn btn-outline-warning btn-sm"> <i class="bi bi-arrow-repeat" style="font-size:18px"></i> Reset Password</button>
         </form>
         <br>
+        {% if not (only_admin != none and user == only_admin) %}
         <form action="{{ url_for('delete_user', user_id=user.user_id) }}" method="post">
           <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure?');"><i class="bi bi-x-circle-fill" style="font-size:18px"></i> Delete
             User</button>
         </form>
         <br>
+        {% endif %}
       </div>
     </div>
     {% endfor %}
