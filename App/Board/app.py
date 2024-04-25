@@ -71,14 +71,14 @@ def add_task():
             user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(int(result["assignee"])), manageTickets.get_ticket(title=result["title"]))
     return redirect(url_for('board'))
 
-@app.route('/del_task', methods=["POST"])
+@app.route('/del_task', methods=["POST", "GET"])
 def del_task():
     if request.method == "POST":
         result = request.form
         remove_success = manageTickets.remove_ticket(manageTickets.get_ticket(int(result["ticket_id"])))
     return redirect(url_for('board'))
 
-@app.route('/edit_task', methods=["POST"])
+@app.route('/edit_task', methods=["POST", "GET"])
 def edit_task():
     if request.method == "POST":
         result = request.form
@@ -91,7 +91,7 @@ def edit_task():
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
     return redirect(url_for('board'))
 
-@app.route('/update_task', methods=["POST"])
+@app.route('/update_task', methods=["POST", "GET"])
 def update_task():
     if request.method == "POST":
         result = request.form
@@ -104,7 +104,7 @@ def update_task():
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": False}
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
 
-@app.route('/add_user_ticket', methods=["POST"])
+@app.route('/add_user_ticket', methods=["POST", "GET"])
 def add_user_ticket():
     if request.method == "POST":
         result = request.form
@@ -114,7 +114,7 @@ def add_user_ticket():
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": True}
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
 
-@app.route('/del_user_ticket', methods=["POST"])
+@app.route('/del_user_ticket', methods=["POST", "GET"])
 def del_user_ticket():
     if request.method == "POST":
         result = request.form
@@ -205,21 +205,6 @@ def inject_user():
     return {}
 
 
-# @app.route('/login', methods=["POST", "GET"])
-# def login():
-#     if request.method == "POST":
-#         result = request.form
-#         # print(result)
-#         valid_info, user_id = manageUsers.login(result["userName"], result["password"])
-#         if valid_info:
-#             session['user_authenticated'] = True
-#             session['user_id'] = user_id
-#             session['user_rights'] = manageUsers.get_active_user_rights()
-#             session["username"] = result["userName"]
-
-#             return redirect(url_for("board"))
-#     return render_template('login.html')
-
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == "POST":
@@ -302,17 +287,6 @@ def logout():
 @app.route('/upload_img')
 def upload_img():
     return render_template('upload_img.html')
-
-# @app.route('/set_profile_picture', methods=["POST"])
-# def set_profile_picture():
-#     if request.method == 'POST':
-#         img = request.files['img']
-#         if img.filename == '':
-#             return redirect(url_for("home"))
-#         if manageUsers.active_user is None:
-#             return redirect(url_for("home"))
-#         manageUsers.change_user_picture(img)
-#     return redirect(url_for("home"))  
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -410,7 +384,7 @@ def delete_user(user_id):
         return "Error deleting user", 400
 
 
-@app.route('/delete_account', methods=["POST"])
+@app.route('/delete_account', methods=["POST", "GET"])
 def delete_account():
     user_id = session.get('user_id')
     if not user_id:
