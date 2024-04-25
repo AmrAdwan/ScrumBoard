@@ -1,121 +1,136 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-sm-3"></div>
-      <div class="col-sm-6" style="text-align: center;">
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h3>Edit Task Details</h3>
+        </div>
+        <div class="card-body">
 
-        <div>
-          <h4>Title</h4>
-          {% if ava_edit["title"]%}
-            <form action="{{ url_for('update_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="text" name="title" value="{{ticket.title}}" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-            </form>
-          {% else %}
-            {{ticket.title}}
-            <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="hidden" name="edit_field" value="title" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
-            </form>
-          {% endif %}
-        </div>
-        <div>
-          <h4>Description</h4>
-          {% if ava_edit["description"]%}
-            <form action="{{ url_for('update_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <textarea name="description" rows="4" cols="50" >{{ticket.description}}</textarea>
-              <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-            </form>
-          {% else %}
-            {{ticket.description}}
-            <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="hidden" name="edit_field" value="description" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
-            </form>
-          {% endif %}
-        </div>
-        <div>
-          <h4>Status</h4>
-          {% if ava_edit["status"]%}
-            <form action="{{ url_for('update_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <select class="form-control" name="status">
-                {% for stat in status %}
-                  <option value="{{stat.name}}">{{stat.name}}</option>
-                {% endfor %}
-              </select>
-              <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-            </form>
-          {% else %}
-            {{ticket.status.name}}
-            <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="hidden" name="edit_field" value="status" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
-            </form>
-          {% endif %}
-        </div>
-        <div>
-          <h4>Hours</h4>
-          {% if ava_edit["hours"]%}
-            <form action="{{ url_for('update_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="number" min="1" name="hours" value="{{ticket.hours}}" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
-            </form>
-          {% else %}
-            {{ticket.hours}}
-            <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="hidden" name="edit_field" value="hours" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
-            </form>
-          {% endif %}
-        </div>
-        <div>
-          <h4>Users</h4>
-          {% if ava_edit["users"]%}
-            {% for user in ticket.users %}
-              {{ user.username }}
-              <form action="{{ url_for('del_user_ticket') }}" method="POST" class="d-inline">
-                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-                <input type="hidden" name="user_id" value="{{user.user_id}}" >
-                <button type="submit" class="btn btn-sm btn-danger">Del</button>
+          <div class="mb-4">
+            <h5>Title</h5>
+            {% if ava_edit["title"] %}
+              <form action="{{ url_for('update_task') }}" method="POST">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <div class="input-group">
+                  <input type="text" name="title" value="{{ ticket.title }}" class="form-control">
+                  <button class="btn btn-success" type="submit">Update</button>
+                </div>
               </form>
-              <br>
-            {% endfor %}
-            {% if users|length > 0 %}
-              <form action="{{ url_for('add_user_ticket') }}" method="POST" class="d-inline">
-                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-                <select class="form-control" name="user_id">
-                  {% for user in users %}
-                  <option value="{{user.user_id}}">{{user.username}}</option>
-                  {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+            {% else %}
+              <p>{{ ticket.title }}</p>
+              <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <input type="hidden" name="edit_field" value="title">
+                <button class="btn btn-secondary btn-sm" type="submit">Edit</button>
               </form>
             {% endif %}
-          {% else %}
-            {% for user in ticket.users %}
-              <p>{{ user.username }}</p>
-            {% endfor %}
-            <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" >
-              <input type="hidden" name="edit_field" value="users" >
-              <button type="submit" class="btn btn-sm btn-outline-primary">Edit</button>
-            </form>
-          {% endif %}
+          </div>
+
+          <div class="mb-4">
+            <h5>Description</h5>
+            {% if ava_edit["description"] %}
+              <form action="{{ url_for('update_task') }}" method="POST">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <textarea name="description" class="form-control" rows="3">{{ ticket.description }}</textarea>
+                <button class="btn btn-success mt-2" type="submit">Update</button>
+              </form>
+            {% else %}
+              <p>{{ ticket.description }}</p>
+              <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <input type="hidden" name="edit_field" value="description">
+                <button class="btn btn-secondary btn-sm" type="submit">Edit</button>
+              </form>
+            {% endif %}
+          </div>
+
+          <div class="mb-4">
+            <h5>Status</h5>
+            {% if ava_edit["status"] %}
+              <form action="{{ url_for('update_task') }}" method="POST">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <select class="form-select" name="status">
+                  {% for stat in status %}
+                    <option value="{{ stat.name }}" {% if stat.name == ticket.status.name %}selected{% endif %}>
+                      {{ stat.name }}
+                    </option>
+                  {% endfor %}
+                </select>
+                <button class="btn btn-success mt-2" type="submit">Update</button>
+              </form>
+            {% else %}
+              <p>{{ ticket.status.name }}</p>
+              <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <input type="hidden" name="edit_field" value="status">
+                <button class="btn btn-secondary btn-sm" type="submit">Edit</button>
+              </form>
+            {% endif %}
+          </div>
+
+          <div class="mb-4">
+            <h5>Hours</h5>
+            {% if ava_edit["hours"] %}
+              <form action="{{ url_for('update_task') }}" method="POST">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <input type="number" name="hours" value="{{ ticket.hours }}" min="0" class="form-control">
+                <button class="btn btn-success mt-2" type="submit">Update</button>
+              </form>
+            {% else %}
+              <p>{{ ticket.hours }}</p>
+              <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <input type="hidden" name="edit_field" value="hours">
+                <button class="btn btn-secondary btn-sm" type="submit">Edit</button>
+              </form>
+            {% endif %}
+          </div>
+
+          <!-- Users -->
+          <div class="mb-3">
+            <label class="form-label"><strong>Users</strong></label>
+            {% if ava_edit["users"] %}
+              {% for user in ticket.users %}
+                <div class="d-flex align-items-center justify-content-between">
+                  <span>{{ user.username }}</span>
+                  <form action="{{ url_for('del_user_ticket') }}" method="POST" class="d-inline">
+                    <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                  </form>
+                </div>
+              {% endfor %}
+              <form action="{{ url_for('add_user_ticket') }}" method="POST" class="mt-2">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <select class="form-select" name="user_id">
+                  {% for user in users %}
+                    <option value="{{ user.user_id }}">{{ user.username }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-outline-primary mt-2">Add User</button>
+              </form>
+            {% else %}
+              <ul class="list-unstyled">
+                {% for user in ticket.users %}
+                  <li>{{ user.username }}</li>
+                {% endfor %}
+              </ul>
+              <form action="{{ url_for('edit_task') }}" method="POST">
+                <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}">
+                <input type="hidden" name="edit_field" value="users">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Edit</button>
+              </form>
+            {% endif %}
+          </div>
+          <button onclick="location.href='{{ url_for('board') }}';" class="btn btn-primary">Back to Board</button>
+
         </div>
-        <br>
-        <button type="submit" onclick="location.href='{{url_for('board')}}';" class="btn btn-sm btn-primary">Back</button>
       </div>
-    <div class="col-sm-3"></div>
+    </div>
   </div>
 </div>
 {% endblock %}

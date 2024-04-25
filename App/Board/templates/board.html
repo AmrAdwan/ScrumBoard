@@ -20,107 +20,112 @@
       {% endif %}
 
       {% for ticket in column_tickets[column] %}
-      <form id="{{'edit_form' + ticket.ticket_id|string}}" action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+      <form id="{{'edit_form' + ticket.ticket_id|string}}" action="{{ url_for('edit_task') }}" method="POST"
+        class="d-inline">
         <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
       </form>
       <div id="ticket{{ ticket.ticket_id }}" class="card my-2 draggable" draggable="true"
-        ondragstart="dragStart(event)" >
+        ondragstart="dragStart(event)">
         {% if active_user is not none and active_user.check_rights_num(4) %}
-        <div class="card-body" onClick="document.forms['{{'edit_form' + ticket.ticket_id|string}}'].submit();">
-        {% else %}
-        <div class="card-body">
-        {% endif %}
-          <h6 class="card-title">{{ ticket.title }}</h6>
-          <p class="card-text">{{ ticket.description }}</p>
-          {% for user in ticket.users %}
-          <p class="card-text"><small class="text-muted">{{ user.username }}</small></p>
-          {% endfor %}
-          <p class="card-text">Hours: {{ ticket.hours }}</p>
+        <div class="card-body" onClick="document.forms['edit_form{{ ticket.ticket_id}}'].submit();">
 
-          {% if active_user is not none and active_user.check_rights_num(4) %}
-            <form id="{{'del_form' + ticket.ticket_id|string}}" action="{{ url_for('del_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
-              <button type="submit" class="btn btn-sm btn-danger" form="{{'del_form' + ticket.ticket_id|string}}">Delete</button>
-            </form>
           {% else %}
+          <div class="card-body">
+            {% endif %}
+            <h6 class="card-title">{{ ticket.title }}</h6>
+            <p class="card-text">{{ ticket.description }}</p>
+            {% for user in ticket.users %}
+            <p class="card-text"><small class="text-muted">{{ user.username }}</small></p>
+            {% endfor %}
+            <p class="card-text">Hours: {{ ticket.hours }}</p>
+
+            {% if active_user is not none and active_user.check_rights_num(4) %}
+            <form id="{{'del_form' + ticket.ticket_id|string}}" action="{{ url_for('del_task') }}" method="POST"
+              class="d-inline">
+              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
+              <button type="submit" class="btn btn-sm btn-danger"
+                form="{{'del_form' + ticket.ticket_id|string}}">Delete</button>
+            </form>
+            {% else %}
             <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
-            <!-- <div class="col-sm-12 text-center"> -->
-            <!-- <div title="You do not have the rights to edit a task">
+              <!-- <div class="col-sm-12 text-center"> -->
+              <!-- <div title="You do not have the rights to edit a task">
                 <button type="button" class="btn btn-primary btn-md center-block" Style="width: 100px;" disabled>Edit</button>
               </div> -->
-            <div title="You do not have the rights to delete a task" class="col-sm-12 text-center">
-              <button type="submit" class="btn btn-danger btn-md center-block" Style="width: 100px;"
-                disabled>Delete</button>
-            </div>
-            <!-- </div> -->
-          </form>
-          {% endif %}
+              <div title="You do not have the rights to delete a task" class="col-sm-12 text-center">
+                <button type="submit" class="btn btn-danger btn-md center-block" Style="width: 100px;"
+                  disabled>Delete</button>
+              </div>
+              <!-- </div> -->
+            </form>
+            {% endif %}
+          </div>
         </div>
+        {% endfor %}
       </div>
       {% endfor %}
     </div>
-    {% endfor %}
   </div>
-</div>
 
-<div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="addTaskModalLabel">Create Task</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form action="{{ url_for('add_task') }}" method="post">
-          <div class="mb-3">
-            <label for="task-title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="task-title" name="title" required>
-          </div>
-          <div class="mb-3">
-            <label for="task-description" class="form-label">Description</label>
-            <textarea class="form-control" id="task-description" name="description" required></textarea>
-          </div>
-          <div class="mb-3">
-            <label for="task-hours" class="form-label">Hours</label>
-            <input type="number" min="1" class="form-control" id="task-hours" name="hours" required>
-          </div>
-          <div class="mb-3">
-            <label for="task-assignee" class="form-label">Assignee</label>
-            <select class="form-control" id="task-assignee" name="assignee">
-              <option value="-1" selected></option>
-              {% for user in valid_users %}
+  <div class="modal fade" id="addTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addTaskModalLabel">Create Task</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{ url_for('add_task') }}" method="post">
+            <div class="mb-3">
+              <label for="task-title" class="form-label">Title</label>
+              <input type="text" class="form-control" id="task-title" name="title" required>
+            </div>
+            <div class="mb-3">
+              <label for="task-description" class="form-label">Description</label>
+              <textarea class="form-control" id="task-description" name="description" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="task-hours" class="form-label">Hours</label>
+              <input type="number" min="1" class="form-control" id="task-hours" name="hours" required>
+            </div>
+            <div class="mb-3">
+              <label for="task-assignee" class="form-label">Assignee</label>
+              <select class="form-control" id="task-assignee" name="assignee">
+                <option value="-1" selected></option>
+                {% for user in valid_users %}
                 <option value="{{user.user_id}}">{{user.username}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Add Task</button>
-          </div>
-        </form>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary">Add Task</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!--<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">-->
-<!--  <div class="modal-dialog">-->
-<!--    <div class="modal-content">-->
-<!--      <div class="modal-header">-->
-<!--        <h5 class="modal-title" id="editTaskModalLabel"></h5>-->
-<!--        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--      </div>-->
+  <!--<div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">-->
+  <!--  <div class="modal-dialog">-->
+  <!--    <div class="modal-content">-->
+  <!--      <div class="modal-header">-->
+  <!--        <h5 class="modal-title" id="editTaskModalLabel"></h5>-->
+  <!--        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+  <!--      </div>-->
 
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-{% endblock %}
+  <!--    </div>-->
+  <!--  </div>-->
+  <!--</div>-->
+  {% endblock %}
 
-{% block extra_js %}
-<script src="{{ url_for('static', filename='javascript/drag_drop.js') }}"></script>
-<script type="text/javascript">
-    window.onload = () => {
+  {% block extra_js %}
+  <script src="{{ url_for('static', filename='javascript/drag_drop.js') }}"></script>
+  <script type="text/javascript">
+    window.onload = () =>
+    {
       const myModal = new bootstrap.Modal('#editTaskModal');
       myModal.show();
     }
-</script>
-{% endblock %}
+  </script>
+  {% endblock %}

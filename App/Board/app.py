@@ -1,4 +1,5 @@
 import base64
+import re
 from flask import Flask, flash, jsonify, redirect, render_template, g, request, session, url_for
 import manage_users as ma_us
 import manage_tickets as ma_ti
@@ -29,6 +30,19 @@ def inject_db_handler():
 def before_request():
     g.user_authenticated = 'user_id' in session and session.get('user_authenticated', False)
     
+def validate_password(password):
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not re.search(r"[A-Z]", password):
+        return False, "Password must contain at least one uppercase letter."
+    if not re.search(r"[a-z]", password):
+        return False, "Password must contain at least one lowercase letter."
+    if not re.search(r"[0-9]", password):
+        return False, "Password must contain at least one number."
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "Password must contain at least one special character."
+    return True, "Password is valid."
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -52,20 +66,19 @@ def add_task():
         create_success = manageTickets.create_ticket(result["title"], result["description"], status.BACKLOG, result["hours"])
         if create_success and int(result["assignee"]) != -1:
             user_success = manageTickets.add_user_to_ticket(manageUsers.get_user(int(result["assignee"])), manageTickets.get_ticket(title=result["title"]))
-    return board()
+    return redirect(url_for('board'))
 
 @app.route('/del_task', methods=["POST"])
 def del_task():
     if request.method == "POST":
         result = request.form
         remove_success = manageTickets.remove_ticket(manageTickets.get_ticket(int(result["ticket_id"])))
-    return board()
+    return redirect(url_for('board'))
 
 @app.route('/edit_task', methods=["POST"])
 def edit_task():
     if request.method == "POST":
         result = request.form
-        print(result["ticket_id"])
         ticket = manageTickets.get_ticket(int(result["ticket_id"]))
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": False}
         if "edit_field" in result:
@@ -73,7 +86,7 @@ def edit_task():
         elif "edit_field" in result:
             ava_edit[result["edit_field"]] = True
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
-    return board()
+    return redirect(url_for('board'))
 
 @app.route('/update_task', methods=["POST"])
 def update_task():
@@ -141,6 +154,11 @@ def account():
             flash('New password and its confirmation should be the same', 'error')
             return render_template('account.html')
 
+        is_valid, message = validate_password(newPassword)
+        if not is_valid:
+            flash(message, 'error')
+            return render_template('account.html')
+
         # Verify the old password is correct
         if not dbHandler.check_username_password(user.username, user.user_id, oldPassword):
             flash('Old password is incorrect', 'error')
@@ -153,8 +171,12 @@ def account():
             return redirect(url_for("home"))
         else:
             flash('Failed to update password.', 'error')
+    only_admin = None
+    for user in manageUsers.users:
+        if manageUsers.check_only_admin(user):
+            only_admin = user
 
-    return render_template('account.html')
+    return render_template('account.html', only_admin=only_admin)
 
 
 
@@ -165,8 +187,12 @@ def manage_users():
         return redirect(url_for('board'))
 
     # Retrieve and pass user data to the template
-    users =  manageUsers.users
-    return render_template('manage_users.html', users=users)
+    users = manageUsers.users
+    only_admin = None
+    for user in users:
+        if manageUsers.check_only_admin(user):
+            only_admin = user
+    return render_template('manage_users.html', users=users, only_admin=only_admin)
 
 @app.context_processor
 def inject_user():
@@ -238,15 +264,28 @@ def register():
 
         if not result['userName']:
             flash('User Name is required!', 'error')
+            return render_template('register.html')
 
-        elif not result['password1']:
-            flash('Password is required!', 'error')
-        elif not result['password2']:
-            flash('Password Confirmation is required!', 'error')
+        if not result['password1'] or not result['password2']:
+            flash('Password and password confirmation are required!', 'error')
+            return render_template('register.html')
+
+        if result['password1'] != result['password2']:
+            flash('Passwords do not match!', 'error')
+            return render_template('register.html')
+
+        is_valid, message = validate_password(result['password1'])
+        if not is_valid:
+            flash(message, 'error')
+            return render_template('register.html')
 
         valid_info = manageUsers.register_user(result["userName"], result["password1"], result["password2"])
         if valid_info:
+            flash('User registered successfully!', 'success')
             return redirect(url_for("login"))
+        else:
+            flash('Failed to register user.', 'error')
+
     return render_template('register.html')
 
 @app.route('/home')
@@ -334,19 +373,22 @@ def reset_user_password(user_id):
         return "User not found", 404
 
     if request.method == "POST":
-        # if 'password' not in request.form:
-        #     return "Password field is missing.", 400
-        
-        new_password = request.form['password']
-        print("new_password", new_password)
+        new_password = request.form.get('password', '')
         
         if not new_password:
-            flash('Paassword is required!', 'error')
+            flash('Password is required!', 'error')
+            return render_template('reset_user_password.html', user=user)
+
+        is_valid, message = validate_password(new_password)
+        if not is_valid:
+            flash(message, 'error')
+            return render_template('reset_user_password.html', user=user)
 
         if manageUsers.change_user_password(new_password, user):
+            flash('Password reset successfully!', 'success')
             return redirect(url_for('manage_users'))
         else:
-            return "Failed to reset password", 400
+            flash('Failed to reset password.', 'error')
 
     return render_template('reset_user_password.html', user=user)
 
@@ -412,9 +454,14 @@ def create_user():
         username = request.form.get('username')
         password = request.form.get('password')
         confirm_password = request.form.get('confirmPassword')
-        print(password, "  ", confirm_password)
+
         if password != confirm_password:
             flash('Passwords do not match!', 'error')
+            return redirect(url_for('create_user'))
+
+        is_valid, message = validate_password(password)
+        if not is_valid:
+            flash(message, 'error')
             return redirect(url_for('create_user'))
 
         if manageUsers.register_user(username, password, confirm_password, "", False):
