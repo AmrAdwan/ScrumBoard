@@ -5,6 +5,8 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  background-color: #f8f9fa; /* Light mode background */
+  color: #212529; /* Light mode text color */
 }
 
 body {
@@ -16,4 +18,63 @@ footer {
   text-align: center;
   background: #333;
   color: white;
+}
+
+/* Dark Mode Specific Styles */
+body.dark-mode {
+  background-color: #343a40; /* Darker background for better contrast */
+  color: #f8f9fa; /* Light text for readability */
+}
+
+body.dark-mode .navbar,
+body.dark-mode .navbar * {
+  /* Ensures all navbar items are styled */
+  background-color: #212529; /* Dark navbar background */
+  color: #f8f9fa; /* Light navbar text */
+}
+
+body.dark-mode a,
+body.dark-mode .navbar a {
+  /* Anchor tags in general and in the navbar */
+  color: #f8f9fa; /* Ensures links are visible */
+}
+
+body.dark-mode .card {
+  background-color: #495057; /* Dark background for cards */
+  color: #f8f9fa; /* Light text for cards */
+}
+
+body.dark-mode .btn-outline-primary {
+  border-color: #dee2e6; /* Lighter border for buttons to stand out */
+  color: #dee2e6; /* Button text color */
+}
+
+body.dark-mode .btn-outline-primary:hover {
+  background-color: #6c757d; /* Dark hover state for contrast */
+  color: #fff; /* White text on hover */
+}
+
+body.dark-mode .alert {
+  background-color: #32383e; /* Darker background for alerts */
+  border-color: #464e54; /* Dark border for alerts to stand out */
+  color: #f8f9fa; /* Light text for readability */
+}
+
+body.dark-mode .form-control {
+  background-color: #495057; /* Dark form fields */
+  color: #f8f9fa; /* Light text for form fields */
+  border-color: #6c757d; /* Dark borders for form controls */
+}
+
+body.dark-mode .dropdown-menu {
+  background-color: #343a40; /* Dark dropdown background */
+  color: #f8f9fa; /* Light dropdown text */
+}
+
+#dark-mode{
+  margin-top: 10%;
+}
+
+#darkModeToggle{
+  margin-top: 15%;
 }
