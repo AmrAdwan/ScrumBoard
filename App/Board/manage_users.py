@@ -89,7 +89,7 @@ class ManageUsers:
 
     def remove_user(self, user_id=None):
         user = self.get_user(user_id=user_id)
-        if user:
+        if user and not self.check_only_admin(user):
             self.users = [u for u in self.users if u.user_id != user_id]
             self.dbHandler.remove_user(user.user_id)
             return True
@@ -138,6 +138,9 @@ class ManageUsers:
 
     def change_user_rights(self, user_id, new_rights):
         user = self.get_user(user_id=user_id)
+        if self.check_only_admin(user):
+            logging.warning(f"Cannot remove only admin")
+            return False
         if user:
             user.set_rights(rights(new_rights))  # Update the rights
             try:
@@ -149,9 +152,21 @@ class ManageUsers:
         logging.warning(f"User not found with ID: {user_id}")
         return False
 
+    # Returns a list with all user not assigned to the given ticket
     def get_free_users(self, ticket):
         result = []
         for user in self.users:
             if user not in ticket.users:
                 result.append(user)
         return result
+
+    # Returns true if the given user is the only one with admin rights
+    def check_only_admin(self, user = None):
+        cur_user = user if user is not None else self.active_user
+        if cur_user.check_rights(rights.ALL):
+            for usr in self.users:
+                if usr is not cur_user and usr.check_rights(rights.ALL):
+                    return False
+            return True
+        else:
+            return False
