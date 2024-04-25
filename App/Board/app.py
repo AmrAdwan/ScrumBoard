@@ -65,8 +65,8 @@ def del_task():
 def edit_task():
     if request.method == "POST":
         result = request.form
+        print(result["ticket_id"])
         ticket = manageTickets.get_ticket(int(result["ticket_id"]))
-        # data = {"title": ticket.title, "description": ticket.description, "status": ticket.status, "hours": ticket.hours, "users": ticket.users}
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": False}
         if "edit_field" in result:
             ava_edit[result["edit_field"]] = True

@@ -20,9 +20,16 @@
       {% endif %}
 
       {% for ticket in column_tickets[column] %}
+      <form id="{{'edit_form' + ticket.ticket_id|string}}" action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+        <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
+      </form>
       <div id="ticket{{ ticket.ticket_id }}" class="card my-2 draggable" draggable="true"
-        ondragstart="dragStart(event)">
+        ondragstart="dragStart(event)" >
+        {% if active_user is not none and active_user.check_rights_num(4) %}
+        <div class="card-body" onClick="document.forms['{{'edit_form' + ticket.ticket_id|string}}'].submit();">
+        {% else %}
         <div class="card-body">
+        {% endif %}
           <h6 class="card-title">{{ ticket.title }}</h6>
           <p class="card-text">{{ ticket.description }}</p>
           {% for user in ticket.users %}
@@ -31,16 +38,11 @@
           <p class="card-text">Hours: {{ ticket.hours }}</p>
 
           {% if active_user is not none and active_user.check_rights_num(4) %}
-            <form action="{{ url_for('edit_task') }}" method="POST" class="d-inline">
+            <form id="{{'del_form' + ticket.ticket_id|string}}" action="{{ url_for('del_task') }}" method="POST" class="d-inline">
               <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
-              <button type="submit" class="btn btn-sm btn-primary">Edit</button>
-            </form>
-            <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
-              <input type="hidden" name="ticket_id" value="{{ ticket.ticket_id }}" required>
-              <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              <button type="submit" class="btn btn-sm btn-danger" form="{{'del_form' + ticket.ticket_id|string}}">Delete</button>
             </form>
           {% else %}
-            <button type="submit" class="btn btn-sm btn-primary" disabled>Edit</button>
             <form action="{{ url_for('del_task') }}" method="POST" class="d-inline">
             <!-- <div class="col-sm-12 text-center"> -->
             <!-- <div title="You do not have the rights to edit a task">
