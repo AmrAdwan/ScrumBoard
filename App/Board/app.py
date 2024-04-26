@@ -103,6 +103,7 @@ def update_task():
                                   result["hours"] if "hours" in result else None)
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": False}
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
+    return redirect(url_for("home"))
 
 @app.route('/add_user_ticket', methods=["POST", "GET"])
 def add_user_ticket():
@@ -113,6 +114,7 @@ def add_user_ticket():
         manageTickets.add_user_to_ticket(user, ticket)
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": True}
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
+    return redirect(url_for("home"))
 
 @app.route('/del_user_ticket', methods=["POST", "GET"])
 def del_user_ticket():
@@ -123,6 +125,7 @@ def del_user_ticket():
         manageTickets.remove_user_from_ticket(user, ticket)
         ava_edit = {"title": False, "description": False, "status": False, "hours": False, "users": True}
         return render_template('edit_task.html', ticket=ticket, ava_edit=ava_edit, status=status, users=manageUsers.get_free_users(ticket))
+    return redirect(url_for("home"))
 
 @app.route('/account', methods=['GET', 'POST'])
 def account():
