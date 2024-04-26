@@ -222,8 +222,6 @@ class DbHandler:
                 if stored_password == password:
                     return True
                 else:
-                    print(stored_password)
-                    print(password)
                     return False
             else:
                 return False
