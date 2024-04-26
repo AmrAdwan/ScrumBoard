@@ -71,8 +71,9 @@
         <li class="nav-item d-flex align-items-center">
           <a class="nav-link d-flex align-items-center {{ 'active' if request.endpoint == 'account' else '' }}"
             href="{{ url_for('account') }}">
-            <img src="{{ url_for('static', filename='images/user_' ~ user.user_id|string ~ '.png') }}"
+            <img src="{{ url_for('static', filename='images/user_' ~ session['user_id']|string ~ '.png') }}"
               class="rounded-circle me-2" alt="Profile" style="height: 40px; width: 40px;">
+
             <span>Account</span>
           </a>
         </li>
