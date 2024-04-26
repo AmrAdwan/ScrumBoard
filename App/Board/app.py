@@ -330,6 +330,9 @@ def set_profile_picture():
 
 @app.route('/user/<int:user_id>/change_rights', methods=["GET", "POST"])
 def change_user_rights(user_id):
+    if not session.get('user_authenticated') or session.get('user_rights') != 6:
+        return redirect(url_for('home'))
+
     user = manageUsers.get_user(user_id=user_id)
     if not user:
         return "User not found", 404
@@ -348,6 +351,8 @@ def change_user_rights(user_id):
 
 @app.route('/user/<int:user_id>/reset_password', methods=["GET", "POST"])
 def reset_user_password(user_id):
+    if not session.get('user_authenticated') or session.get('user_rights') != 6:
+        return redirect(url_for('home'))
     user = manageUsers.get_user(user_id=user_id)
     if not user:
         return "User not found", 404
