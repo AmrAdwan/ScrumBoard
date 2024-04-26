@@ -30,14 +30,6 @@ def inject_db_handler():
 def before_request():
     g.user_authenticated = 'user_id' in session and session.get('user_authenticated', False)
 
-@app.after_request
-def add_header(response):
-    # Disable caching
-    response.headers['Cache-Control'] = 'no-store'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
-    return response
-
     
 def validate_password(password):
     if len(password) < 8:
