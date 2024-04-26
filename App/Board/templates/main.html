@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='style/main.css') }}">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-
+  
   <title>ScrumBoard App</title>
 </head>
 
@@ -84,7 +84,16 @@
       </div>
       {% endif %}
     </div>
+    <!-- This ul is aligned to the right side of the navbar -->
+    <ul class="navbar-nav ms-auto">
+      <!-- Help Page Link -->
+      <li class="nav-item">
+        <a class="nav-link {{ 'active' if request.endpoint == 'help' else '' }}" href="{{ url_for('help') }}">
+          <i class="fa fa-fw fa-question-circle" style="font-size:20px"></i></a>
+      </li>
+    </ul>
   </nav>
+
 
   <!-- Flash Messages -->
   <div class="container mt-3">
@@ -111,6 +120,11 @@
     ScrumBoard | Software Engineering @ Educom 2024
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+  
   <script>
     document.addEventListener('DOMContentLoaded', function ()
     {

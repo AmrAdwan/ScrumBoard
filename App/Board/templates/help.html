@@ -1,0 +1,116 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Help & Instructions</h1>
+
+  <div class="accordion" id="helpAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingGettingStarted">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGettingStarted" aria-expanded="true" aria-controls="collapseGettingStarted">
+          Getting Started
+        </button>
+      </h2>
+      <div id="collapseGettingStarted" class="accordion-collapse collapse show" aria-labelledby="headingGettingStarted" data-bs-parent="#helpAccordion">
+        <div class="accordion-body">
+          <strong>Welcome to the Scrum Board App!</strong> This tool is designed to help you manage your projects using the Scrum framework effectively. Below are the instructions to guide you through the main features of the app. To access the Scrum Board, you must log in with your credentials. If you do not have an account, please register by clicking the "Register" link in the navigation bar. After logging in, you will be redirected to the Board Page, where you can navigate to different sections of the app using the navigation bar at the top.
+        </div>
+      </div>
+    </div>
+
+    <!-- Other sections will follow the same structure as above -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingNavigation">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNavigation" aria-expanded="false" aria-controls="collapseNavigation">
+          Navigation
+        </button>
+      </h2>
+      <div id="collapseNavigation" class="accordion-collapse collapse" aria-labelledby="headingNavigation" data-bs-parent="#helpAccordion">
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Home:</strong> Brings you back to the Home Page.</li>
+            <li><strong>Board:</strong> Where you can see the Scrum Board with all the tasks.</li>
+            <li><strong>Manage Users:</strong> (Admin Only) Where you can manage user accounts and permissions.</li>
+            <li><strong>Account:</strong> View and edit your account details.</li>
+            <li><strong>Logout:</strong> Safely exit your account.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingUsingBoard">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseUsingBoard" aria-expanded="false" aria-controls="collapseUsingBoard">
+          Using the Board
+        </button>
+      </h2>
+      <div id="collapseUsingBoard" class="accordion-collapse collapse" aria-labelledby="headingUsingBoard" data-bs-parent="#helpAccordion">
+        <div class="accordion-body">
+          <p>The Scrum Board is divided into several columns, each representing a different stage of task completion: Backlog, Ready, In Progress, Review, and Done.</p>
+          <h5>Adding Tasks</h5>
+          <ol>
+            <li>Click on the <strong>Add Task</strong> button.</li>
+            <li>Fill in the task details such as title, description, and estimated hours.</li>
+            <li>Assign the task to a team member (if applicable).</li>
+            <li>Click <strong>Submit</strong> to add the task to the board.</li>
+          </ol>
+
+          <h5>Editing Tasks</h5>
+          <ol>
+            <li>Click on a task to open its details.</li>
+            <li>Click the <strong>Edit</strong> button to modify the task's title, description, status, or assigned user.</li>
+            <li>After making changes, click <strong>Save</strong> to update the task.</li>
+          </ol>
+
+          <h5>Deleting Tasks</h5>
+          <p>Click the <strong>Delete</strong> button to remove a task from the board.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingManagingAccount">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseManagingAccount" aria-expanded="false" aria-controls="collapseManagingAccount">
+          Managing Your Account
+        </button>
+      </h2>
+      <div id="collapseManagingAccount" class="accordion-collapse collapse" aria-labelledby="headingManagingAccount" data-bs-parent="#helpAccordion">
+        <div class="accordion-body">
+          <p>You can change your password or update your profile picture by navigating to the <strong>Account</strong> page. Ensure your new password is strong and confirm it before saving.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAdminFeatures">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdminFeatures" aria-expanded="false" aria-controls="collapseAdminFeatures">
+          Admin Features
+        </button>
+      </h2>
+      <div id="collapseAdminFeatures" class="accordion-collapse collapse" aria-labelledby="headingAdminFeatures" data-bs-parent="#helpAccordion">
+        <div class="accordion-body">
+          <h5>Managing Users</h5>
+          <p>Go to the <strong>Manage Users</strong> section to add new users, change user rights, reset passwords, or delete users.</p>
+          <h5>User Rights</h5>
+          <p><strong>Change Rights:</strong> Adjust user permissions according to their role.</p>
+          <p><strong>Reset Password:</strong> Set a new password for a user if they forget theirs.</p>
+          <p><strong>Delete User:</strong> Remove a user from the system.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingAdditionalHelp">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdditionalHelp" aria-expanded="false" aria-controls="collapseAdditionalHelp">
+          Need More Help?
+        </button>
+      </h2>
+      <div id="collapseAdditionalHelp" class="accordion-collapse collapse" aria-labelledby="headingAdditionalHelp" data-bs-parent="#helpAccordion">
+        <div class="accordion-body">
+          <p>If you require further assistance or have any questions, please do not hesitate to contact us.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

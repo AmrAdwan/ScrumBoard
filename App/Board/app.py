@@ -48,6 +48,11 @@ def validate_password(password):
 def home():
     return render_template('home.html')
 
+@app.route('/help')
+def help():
+    return render_template('help.html')
+
+
 @app.route('/board')
 def board():
     columns = ['Backlog', 'Ready', 'In Progress', 'Review', 'Done']
