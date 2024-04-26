@@ -29,6 +29,15 @@ def inject_db_handler():
 @app.before_request
 def before_request():
     g.user_authenticated = 'user_id' in session and session.get('user_authenticated', False)
+
+@app.after_request
+def add_header(response):
+    # Disable caching
+    response.headers['Cache-Control'] = 'no-store'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
     
 def validate_password(password):
     if len(password) < 8:
@@ -189,7 +198,9 @@ def account():
 
 @app.route('/manage_users')
 def manage_users():
+    user_rights = session.get('user_rights')
     if not session.get('user_authenticated') or session.get('user_rights') != 6:
+        flash('Insufficient rights to access this page.', 'error')
         return redirect(url_for('board'))
 
     # Retrieve and pass user data to the template
@@ -283,6 +294,9 @@ def register():
 def logout():
     manageUsers.logout()
     session.pop('user_id', None) 
+    session.pop('user_authenticated', None)
+    session.clear()
+
     # Remove user_id from session
     session['user_authenticated'] = False
     return redirect(url_for("home"))
@@ -328,25 +342,57 @@ def set_profile_picture():
 
 
 
+# @app.route('/user/<int:user_id>/change_rights', methods=["GET", "POST"])
+# def change_user_rights(user_id):
+#     if not session.get('user_authenticated') or session.get('user_rights') != 6:
+#         return redirect(url_for('home'))
+
+#     user = manageUsers.get_user(user_id=user_id)
+#     if not user:
+#         return "User not found", 404
+
+#     if request.method == "POST":
+#         if 'rights' in request.form:
+#             new_rights = int(request.form['rights'])
+#             if manageUsers.change_user_rights(user_id, new_rights):
+#                 return redirect(url_for('manage_users'))
+#             else:
+#                 logging.error(f"Failed to update rights for user {user_id}")
+#                 return "Failed to update rights", 400
+
+#     return render_template('change_user_rights.html', user=user, rights=list(rights))
+
 @app.route('/user/<int:user_id>/change_rights', methods=["GET", "POST"])
 def change_user_rights(user_id):
     if not session.get('user_authenticated') or session.get('user_rights') != 6:
+        flash('Insufficient rights to access this page.', 'error')
         return redirect(url_for('home'))
 
     user = manageUsers.get_user(user_id=user_id)
     if not user:
+        flash('User not found', 'error')
         return "User not found", 404
 
     if request.method == "POST":
         if 'rights' in request.form:
             new_rights = int(request.form['rights'])
             if manageUsers.change_user_rights(user_id, new_rights):
+                # If the current user's rights were changed, update the session
+                if user_id == session.get('user_id'):
+                    session['user_rights'] = new_rights
+                    # If the rights are no longer admin, log the user out
+                    if new_rights != 6:
+                        flash('Your rights have been updated. Please log in again.', 'info')
+                        return redirect(url_for('logout'))
+                flash('User rights updated successfully!', 'success')
                 return redirect(url_for('manage_users'))
             else:
-                logging.error(f"Failed to update rights for user {user_id}")
+                flash('Failed to update rights.', 'error')
                 return "Failed to update rights", 400
 
     return render_template('change_user_rights.html', user=user, rights=list(rights))
+
+
 
 
 @app.route('/user/<int:user_id>/reset_password', methods=["GET", "POST"])
