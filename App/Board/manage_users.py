@@ -92,6 +92,8 @@ class ManageUsers:
         if user and not self.check_only_admin(user):
             if user == self.active_user:
                 self.active_user = None
+            for ticket in user.tickets:
+                ticket.users.remove(user)
             self.users = [u for u in self.users if u.user_id != user_id]
             self.dbHandler.remove_user(user.user_id)
             return True
